@@ -6,9 +6,15 @@
 # 6 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
 # 7 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
 # 8 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
-# 23 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+# 28 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+// Set up buttons
 BfButton dBtn(BfButton::STANDALONE_DIGITAL, 5, false, 0x1);
 BfButton bBtn(BfButton::STANDALONE_DIGITAL, 8, false, 0x1);
+BfButton cBtn(BfButton::STANDALONE_DIGITAL, 11, false, 0x1);
+
+//Set up DACs
+MCP4822 dac1(0);
+MCP4822 dac2(1);
 
 // Set up the ring
 Adafruit_NeoPixel ring(16, 4, ((1 << 6) | (1 << 4) | (0 << 2) | (2)) /*|< Transmit as G,R,B*/ + 0x0000 /*|< 800 KHz data transmission*/);
@@ -32,31 +38,27 @@ struct Step
 struct Track
 {
     Step steps[16];
+    bool gateHigh = false;
 };
 
 struct Sequence
 {
     Track tracks[4];
 };
-
-// note handling stuff
-
-// create the timer
-auto timer = timer_create_default();
 //=========VARIABLES=========================
-
+auto timer = timer_create_default();
 RotaryEncoder *encD = nullptr;
 RotaryEncoder *encC = nullptr;
 RotaryEncoder *encB = nullptr;
 int currentStep = 1;
 int selected = 1;
-long ms = 0;
+int ms = 0;
 int tempo = 120;
 int periodMs = 250;
 int currentTrack = 0;
 bool isPlaying = false;
 Sequence seq;
-//=======Color stuff
+//=======Color stuff================================
 
 struct Hsv
 {
@@ -265,9 +267,76 @@ void bSwitchPress(BfButton *btn, BfButton::press_pattern_t pattern)
         Serial.println(isPlaying);
     }
 }
+
+void cSwitchPress(BfButton *btn, BfButton::press_pattern_t pattern)
+{
+    if (pattern == BfButton::SINGLE_PRESS)
+    {
+        //TODO: remember what this button is supposed to be for
+
+    }
+}
 //======Output Handling========
+
+void setVoltageForTrack(int trk, uint16_t mV)
+{
+    switch(trk)
+    {
+        case 0:
+            dac1.setVoltageA(mV);
+            break;
+        case 1:
+            dac1.setVoltageB(mV);
+            break;
+        case 2:
+            dac2.setVoltageA(mV);
+            break;
+        case 3:
+            dac2.setVoltageB(mV);
+            break;
+        default:
+            break;
+    }
+}
+//determines the value to set for the DAC
+uint16_t mvForMidiNote(int note)
+{
+    return (uint16_t)((float)note * 42.626f + 0.5);
+}
+//On each loop, checks if the gate output needs to be high
+bool gateOn(int idx, int trk=0)
+{
+    auto step = seq.tracks[trk].steps[idx];
+    if (!step.gate || currentStep != idx)
+        return false;
+    //check when the gate for this step should end
+    auto endMs = (periodMs * (step.gateLength / 80));
+    return ms < endMs;
+}
+void processTrack(int idx)
+{
+    bool gate = gateOn(currentStep, idx);
+    if (gate == seq.tracks[idx].gateHigh)
+        return;
+    //we know that gate != gateHigh
+    if(gate)
+    {
+        //TODO: set gate output high
+
+        //set the correct v/oct output
+        setVoltageForTrack(idx, mvForMidiNote(seq.tracks[idx].steps[currentStep].midiNum));
+    }
+    else
+    {
+
+    }
+    seq.tracks[idx].gateHigh = gate;
+
+}
+
 void setGates()
 {
+
 }
 
 void setPitches()
@@ -279,9 +348,14 @@ void setPitches()
 void setup()
 {
     Serial.begin(9600);
+
     setTempo(tempo);
+
+    //Neo Pixel setup
     ring.begin();
     ring.setBrightness(25);
+
+    //Set up encoders
     encD = new RotaryEncoder(2, 3, RotaryEncoder::LatchMode::FOUR3);
     encC = new RotaryEncoder(9, 10, RotaryEncoder::LatchMode::FOUR3);
     encB = new RotaryEncoder(6, 7, RotaryEncoder::LatchMode::FOUR3);
@@ -291,25 +365,51 @@ void setup()
     attachInterrupt(((10) == 2 ? 0 : ((10) == 3 ? 1 : -1)), checkPositionC, 1);
     attachInterrupt(((6) == 2 ? 0 : ((6) == 3 ? 1 : -1)), checkPositionB, 1);
     attachInterrupt(((7) == 2 ? 0 : ((7) == 3 ? 1 : -1)), checkPositionB, 1);
+
     timer.every(1, checkAdvance);
 
+    //Set up buttons
     dBtn.onPress(dSwitchPress)
         .onDoublePress(dSwitchPress)
         .onPressFor(dSwitchPress, 1000);
-
     bBtn.onPress(bSwitchPress)
         .onDoublePress(bSwitchPress) // default timeout
         .onPressFor(bSwitchPress, 1000); // custom timeout for 1 second
+    cBtn.onPress(cSwitchPress)
+        .onDoublePress(cSwitchPress) // default timeout
+        .onPressFor(cSwitchPress, 1000); // custom timeout for 1 second
+
+    //Set up DACs
+    dac1.init();
+    dac2.init();
+
+    dac1.turnOnChannelA();
+    dac1.turnOnChannelB();
+
+    dac2.turnOnChannelA();
+    dac2.turnOnChannelB();
+
+    dac1.setGainA(MCP4822::High);
+    dac1.setGainB(MCP4822::High);
+
+    dac2.setGainA(MCP4822::High);
+    dac2.setGainB(MCP4822::High);
 }
 
 void loop()
 {
+    timer.tick();
+    //poll the inputs
     dBtn.read();
     bBtn.read();
-    timer.tick();
+    cBtn.read();
     checkEncD();
     checkEncC();
     checkEncB();
+    //set the gate outputs
+    setGates();
+    //set the v/oct outputs
+    setPitches();
     // update the neo pixels
     setRingPixels();
 }

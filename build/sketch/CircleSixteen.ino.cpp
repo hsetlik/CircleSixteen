@@ -11,6 +11,9 @@
 #define NUM_STEPS 16
 #define NUM_TRACKS 4
 
+#define DAC1_PIN 0
+#define DAC2_PIN 1
+
 #define RING 4
 #define DCLK 2
 #define DDATA 3
@@ -22,8 +25,16 @@
 #define BDATA 7
 #define BSW 8
 
+#define HALFSTEP_MV 42.626f
+
+// Set up buttons
 BfButton dBtn(BfButton::STANDALONE_DIGITAL, DSW, false, HIGH);
 BfButton bBtn(BfButton::STANDALONE_DIGITAL, BSW, false, HIGH);
+BfButton cBtn(BfButton::STANDALONE_DIGITAL, CSW, false, HIGH);
+
+//Set up DACs
+MCP4822 dac1(DAC1_PIN);
+MCP4822 dac2(DAC2_PIN);
 
 // Set up the ring
 Adafruit_NeoPixel ring(16, RING, NEO_GRB + NEO_KHZ800);
@@ -47,31 +58,27 @@ struct Step
 struct Track
 {
     Step steps[16];
+    bool gateHigh = false;
 };
 
 struct Sequence
 {
     Track tracks[4];
 };
-
-// note handling stuff
-
-// create the timer
-auto timer = timer_create_default();
 //=========VARIABLES=========================
-
+auto timer = timer_create_default();
 RotaryEncoder *encD = nullptr;
 RotaryEncoder *encC = nullptr;
 RotaryEncoder *encB = nullptr;
 int currentStep = 1;
 int selected = 1;
-long ms = 0;
+int ms = 0;
 int tempo = 120;
 int periodMs = 250;
 int currentTrack = 0;
 bool isPlaying = false;
 Sequence seq;
-//=======Color stuff
+//=======Color stuff================================
 
 struct Hsv
 {
@@ -97,49 +104,57 @@ const Hsv stepColor = {330.0f, 1.0f, 0.6f};
 const Hsv hsvColors[] = {cHsv, csHsv, dHsv, dsHsv, eHsv, fHsv, fsHsv, gHsv, gsHsv, aHsv, asHsv, bHsv};
 
 // note will be 0 - 128
-#line 98 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+#line 105 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
 Hsv forMidiNote(int note);
-#line 102 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+#line 109 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
 void setRingPixel(int index, Hsv color);
-#line 108 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+#line 115 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
 Hsv getCurrentPixelColor(int index);
-#line 126 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+#line 133 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
 Hsv lerp(float p, Hsv a, Hsv b);
-#line 135 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+#line 142 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
 uint32_t asRgb(Hsv input);
-#line 143 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+#line 150 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
 void setRingPixels();
-#line 154 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+#line 161 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
 void setTempo(int newTempo);
-#line 164 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+#line 171 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
 void checkPositionD();
-#line 169 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+#line 176 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
 void checkPositionC();
-#line 174 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+#line 181 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
 void checkPositionB();
-#line 180 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+#line 187 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
 bool checkAdvance(void *);
-#line 192 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-void advance();
 #line 199 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+void advance();
+#line 206 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
 void checkEncD();
-#line 219 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+#line 226 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
 void checkEncC();
-#line 236 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+#line 243 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
 void checkEncB();
-#line 260 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+#line 267 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
 void dSwitchPress(BfButton *btn, BfButton::press_pattern_t pattern);
-#line 272 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+#line 279 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
 void bSwitchPress(BfButton *btn, BfButton::press_pattern_t pattern);
-#line 282 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+#line 289 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+void cSwitchPress(BfButton *btn, BfButton::press_pattern_t pattern);
+#line 299 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+void setVoltageForTrack(int trk, uint16_t mV);
+#line 320 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+uint16_t mvForMidiNote(int note);
+#line 334 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+void processTrack(int idx);
+#line 355 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
 void setGates();
-#line 286 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+#line 360 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
 void setPitches();
-#line 292 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+#line 366 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
 void setup();
-#line 318 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+#line 417 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
 void loop();
-#line 98 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+#line 105 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
 Hsv forMidiNote(int note)
 {
     return hsvColors[note % 12];
@@ -323,9 +338,76 @@ void bSwitchPress(BfButton *btn, BfButton::press_pattern_t pattern)
         Serial.println(isPlaying);
     }
 }
+
+void cSwitchPress(BfButton *btn, BfButton::press_pattern_t pattern)
+{
+    if (pattern == BfButton::SINGLE_PRESS)
+    {
+        //TODO: remember what this button is supposed to be for
+        
+    }
+}
 //======Output Handling========
+
+void setVoltageForTrack(int trk, uint16_t mV)
+{
+    switch(trk)
+    {
+        case 0:
+            dac1.setVoltageA(mV);
+            break;
+        case 1:
+            dac1.setVoltageB(mV);
+            break;
+        case 2:
+            dac2.setVoltageA(mV);
+            break;
+        case 3:
+            dac2.setVoltageB(mV);
+            break;
+        default:
+            break;
+    }
+}
+//determines the value to set for the DAC
+uint16_t mvForMidiNote(int note)
+{
+    return (uint16_t)((float)note * HALFSTEP_MV + 0.5);
+}
+//On each loop, checks if the gate output needs to be high
+bool gateOn(int idx, int trk=0)
+{
+    auto step = seq.tracks[trk].steps[idx];
+    if (!step.gate || currentStep != idx)
+        return false;
+    //check when the gate for this step should end
+    auto endMs = (periodMs * (step.gateLength / 80));
+    return ms < endMs;
+}
+void processTrack(int idx)
+{
+    bool gate = gateOn(currentStep, idx);
+    if (gate == seq.tracks[idx].gateHigh)
+        return;
+    //we know that gate != gateHigh
+    if(gate)
+    {
+        //TODO: set gate output high
+
+        //set the correct v/oct output
+        setVoltageForTrack(idx, mvForMidiNote(seq.tracks[idx].steps[currentStep].midiNum));
+    }
+    else
+    {
+
+    }
+    seq.tracks[idx].gateHigh = gate;
+
+}
+
 void setGates()
 {
+
 }
 
 void setPitches()
@@ -337,9 +419,14 @@ void setPitches()
 void setup()
 {
     Serial.begin(9600);
+   
     setTempo(tempo);
+
+    //Neo Pixel setup
     ring.begin();
     ring.setBrightness(25);
+
+    //Set up encoders
     encD = new RotaryEncoder(DCLK, DDATA, RotaryEncoder::LatchMode::FOUR3);
     encC = new RotaryEncoder(CCLK, CDATA, RotaryEncoder::LatchMode::FOUR3);
     encB = new RotaryEncoder(BCLK, BDATA, RotaryEncoder::LatchMode::FOUR3);
@@ -349,25 +436,51 @@ void setup()
     attachInterrupt(digitalPinToInterrupt(CDATA), checkPositionC, CHANGE);
     attachInterrupt(digitalPinToInterrupt(BCLK), checkPositionB, CHANGE);
     attachInterrupt(digitalPinToInterrupt(BDATA), checkPositionB, CHANGE);
+    
     timer.every(1, checkAdvance);
 
+    //Set up buttons
     dBtn.onPress(dSwitchPress)
         .onDoublePress(dSwitchPress)
         .onPressFor(dSwitchPress, 1000);
-
     bBtn.onPress(bSwitchPress)
         .onDoublePress(bSwitchPress)     // default timeout
         .onPressFor(bSwitchPress, 1000); // custom timeout for 1 second
+    cBtn.onPress(cSwitchPress)
+        .onDoublePress(cSwitchPress)     // default timeout
+        .onPressFor(cSwitchPress, 1000); // custom timeout for 1 second
+
+    //Set up DACs
+    dac1.init();
+    dac2.init();
+
+    dac1.turnOnChannelA();
+    dac1.turnOnChannelB();
+
+    dac2.turnOnChannelA();
+    dac2.turnOnChannelB();
+
+    dac1.setGainA(MCP4822::High);
+    dac1.setGainB(MCP4822::High);
+
+    dac2.setGainA(MCP4822::High);
+    dac2.setGainB(MCP4822::High);
 }
 
 void loop()
 {
+    timer.tick();
+    //poll the inputs
     dBtn.read();
     bBtn.read();
-    timer.tick();
+    cBtn.read();
     checkEncD();
     checkEncC();
     checkEncB();
+    //set the gate outputs
+    setGates();
+    //set the v/oct outputs
+    setPitches();
     // update the neo pixels
     setRingPixels();
 }
