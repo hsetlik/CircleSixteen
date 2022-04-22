@@ -1,3 +1,4 @@
+
 #include <Adafruit_NeoPixel.h>
 #include <MCP48xx.h>
 #include <arduino-timer.h>
@@ -13,6 +14,8 @@
 #define DAC2_PIN 1
 
 #define RING 4
+#define TRK A4
+
 #define DCLK 2
 #define DDATA 3
 #define DSW 5
@@ -22,9 +25,12 @@
 #define BCLK 6
 #define BDATA 7
 #define BSW 8
+#define ACLK A0
+#define ADATA A1
 
 #define HALFSTEP_MV 42.626f
 
+const uint8_t gatePins[] = {13, 12, A2, A3};
 // Set up buttons
 BfButton dBtn(BfButton::STANDALONE_DIGITAL, DSW, false, HIGH);
 BfButton bBtn(BfButton::STANDALONE_DIGITAL, BSW, false, HIGH);
@@ -36,6 +42,7 @@ MCP4822 dac2(DAC2_PIN);
 
 // Set up the ring
 Adafruit_NeoPixel ring(16, RING, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel trk(4, TRK, NEO_GRB + NEO_KHZ800);
 
 //===========================
 // Sequencing logic objects
@@ -68,14 +75,17 @@ auto timer = timer_create_default();
 RotaryEncoder *encD = nullptr;
 RotaryEncoder *encC = nullptr;
 RotaryEncoder *encB = nullptr;
+RotaryEncoder *encA = nullptr;
 int currentStep = 1;
 int selected = 1;
-int ms = 0;
+unsigned long microsIntoCycle = 0;
 int tempo = 120;
-int periodMs = 250;
+unsigned long periodMicros = 250;
 int currentTrack = 0;
 bool isPlaying = false;
+bool tempoMode = false; //ENC c can toggle between controlling tempo and gate length
 Sequence seq;
+unsigned long lastMicros = 0;
 //=======Color stuff================================
 
 struct Hsv
@@ -99,20 +109,31 @@ const Hsv bHsv = {330.0f, 1.0f, 0.6f};
 
 const Hsv stepColor = {330.0f, 1.0f, 0.6f};
 
-const Hsv hsvColors[] = {cHsv, csHsv, dHsv, dsHsv, eHsv, fHsv, fsHsv, gHsv, gsHsv, aHsv, asHsv, bHsv};
+const Hsv pitchColors[] = {cHsv, csHsv, dHsv, dsHsv, eHsv, fHsv, fsHsv, gHsv, gsHsv, aHsv, asHsv, bHsv};
+
+const Hsv trk1Hsv = {120.0f, 0.71f, 0.88f};
+const Hsv trk2Hsv = {210.0f, 0.71f, 0.88f};
+const Hsv trk3Hsv = {300.0f, 0.71f, 0.88f};
+const Hsv trk4Hsv = {30.0f, 0.71f, 0.88f};
+
+const Hsv trackColors[] = {trk1Hsv, trk2Hsv, trk3Hsv, trk4Hsv};
+
 
 // note will be 0 - 128
 Hsv forMidiNote(int note)
 {
-    return hsvColors[note % 12];
+    return pitchColors[note % 12];
 }
 void setRingPixel(int index, Hsv color)
 {
     ring.setPixelColor(index, asRgb(color));
 }
-
+void setTrackPixel(int index, Hsv color)
+{
+    trk.setPixelColor(index, asRgb(color));
+}
 //==============GET PIXEL COLOR
-Hsv getCurrentPixelColor(int index)
+Hsv getRingPixelColor(int index)
 {
     Hsv color = forMidiNote(seq.tracks[currentTrack].steps[index].midiNum);
     bool gate = seq.tracks[currentTrack].steps[index].gate;
@@ -126,6 +147,16 @@ Hsv getCurrentPixelColor(int index)
         return stepColor;
     else if (gate)
         return color;
+    return {0.0f, 0.0f, 0.0f};
+}
+
+Hsv getTrackPixelColor(int index)
+{
+    auto color = trackColors[index % 4];
+    if (currentTrack == index)
+        return color;
+    if (seq.tracks[index].steps[currentStep].gate)
+        return {color.h, color.s, 0.45f};
     return {0.0f, 0.0f, 0.0f};
 }
 
@@ -152,9 +183,20 @@ void setRingPixels()
     ring.clear();
     for (int i = 0; i < 16; i++)
     {
-        setRingPixel(i, getCurrentPixelColor(i));
+        setRingPixel(i, getRingPixelColor(i));
     }
     ring.show();
+}
+
+void setTrackPixels()
+{
+    trk.clear();
+    for(int i = 0; i < NUM_TRACKS; ++i)
+    {
+        setTrackPixel(i, getTrackPixelColor(i));
+    }
+    trk.show();
+    
 }
 //=================================
 // TEMPO CONTROL
@@ -162,7 +204,7 @@ void setTempo(int newTempo)
 {
     tempo = newTempo;
     float fPeriod = 60.0f / (float)tempo;
-    periodMs = fPeriod * 500;
+    periodMicros = (unsigned long)(fPeriod * 500000.0f);
     // Serial.println("Period:");
     // Serial.println(periodMs);
 }
@@ -183,16 +225,34 @@ void checkPositionB()
     encB->tick();
 }
 
-// timer callback- checks if it's time to advance to the next step
-bool checkAdvance(void *)
+void checkPositionA()
 {
-    ms += 1;
-    if (ms >= periodMs)
+    encB->tick();
+}
+
+bool checkAdvance()
+{
+    auto newMicros = micros();
+    microsIntoCycle += (newMicros - lastMicros);
+    lastMicros = newMicros;
+    if (microsIntoCycle >= periodMicros)
     {
-        ms = 0;
+        microsIntoCycle = 0;
         if (isPlaying)
             advance();
     }
+    return true;
+}
+bool updateOutputs(void *)
+{
+    //update gate/ cv outputs
+    for(int i = 0; i < NUM_TRACKS; ++i)
+    {
+        processTrack(i);
+    }
+    // update the neo pixels
+    setRingPixels();
+    setTrackPixels();
     return true;
 }
 // move to the next step
@@ -239,6 +299,24 @@ void checkEncC()
         cPos = newPos;
     }
 }
+
+void checkEncA()
+{
+    static int aPos = 0;
+    encA->tick(); // just call tick() to check the state.
+    int newPos = encA->getPosition();
+    // set selected step
+    if (aPos != newPos)
+    {
+        // Serial.println("C Pos:");
+        // Serial.println(newPos);
+        int difference = newPos - aPos;
+        int newTrack = (currentTrack + difference) % NUM_TRACKS;
+        currentTrack = (newTrack < 0) ? NUM_TRACKS + newTrack : newTrack;
+        aPos = newPos;
+    }
+}
+
 
 void checkEncB()
 {
@@ -290,8 +368,7 @@ void cSwitchPress(BfButton *btn, BfButton::press_pattern_t pattern)
 {
     if (pattern == BfButton::SINGLE_PRESS)
     {
-        //TODO: remember what this button is supposed to be for
-        
+        tempoMode = !tempoMode;       
     }
 }
 //======Output Handling========
@@ -328,8 +405,8 @@ bool gateOn(int idx, int trk=0)
     if (!step.gate || currentStep != idx)
         return false;
     //check when the gate for this step should end
-    auto endMs = (periodMs * (step.gateLength / 80));
-    return ms < endMs;
+    auto endMs = (periodMicros * (step.gateLength / 80));
+    return microsIntoCycle < endMs;
 }
 void processTrack(int idx)
 {
@@ -339,29 +416,27 @@ void processTrack(int idx)
     //we know that gate != gateHigh
     if(gate)
     {
-        //TODO: set gate output high
-
+        digitalWrite(gatePins[idx], 1);
         //set the correct v/oct output
         setVoltageForTrack(idx, mvForMidiNote(seq.tracks[idx].steps[currentStep].midiNum));
+        Serial.print("Note on on track");
+        Serial.print(idx);
+        Serial.print(" at ");
+        Serial.println(lastMicros);
+        dac1.updateDAC();
+        dac2.updateDAC();
     }
     else
     {
-
+        digitalWrite(gatePins[idx], 0);
+        Serial.print("Note off on track ");
+        Serial.print(idx);
+        Serial.print(" at ");
+        Serial.println(lastMicros);
     }
     seq.tracks[idx].gateHigh = gate;
 
 }
-
-void setGates()
-{
-
-}
-
-void setPitches()
-{
-    // TODO
-}
-
 //==========================
 void setup()
 {
@@ -373,18 +448,26 @@ void setup()
     ring.begin();
     ring.setBrightness(25);
 
+    trk.begin();
+    trk.setBrightness(25);
+
+    
+
     //Set up encoders
     encD = new RotaryEncoder(DCLK, DDATA, RotaryEncoder::LatchMode::FOUR3);
     encC = new RotaryEncoder(CCLK, CDATA, RotaryEncoder::LatchMode::FOUR3);
     encB = new RotaryEncoder(BCLK, BDATA, RotaryEncoder::LatchMode::FOUR3);
+    encA = new RotaryEncoder(ACLK, ADATA, RotaryEncoder::LatchMode::FOUR3);
     attachInterrupt(digitalPinToInterrupt(DCLK), checkPositionD, CHANGE);
     attachInterrupt(digitalPinToInterrupt(DDATA), checkPositionD, CHANGE);
     attachInterrupt(digitalPinToInterrupt(CCLK), checkPositionC, CHANGE);
     attachInterrupt(digitalPinToInterrupt(CDATA), checkPositionC, CHANGE);
     attachInterrupt(digitalPinToInterrupt(BCLK), checkPositionB, CHANGE);
     attachInterrupt(digitalPinToInterrupt(BDATA), checkPositionB, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(ACLK), checkPositionA, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(ADATA), checkPositionA, CHANGE);
     
-    timer.every(1, checkAdvance);
+    timer.every(1, updateOutputs);
 
     //Set up buttons
     dBtn.onPress(dSwitchPress)
@@ -412,10 +495,18 @@ void setup()
 
     dac2.setGainA(MCP4822::High);
     dac2.setGainB(MCP4822::High);
+
+    //set up gate outputs
+    for (auto i : gatePins)
+    {
+        pinMode(i, OUTPUT);
+        digitalWrite(i, 0);
+    }
 }
 
 void loop()
 {
+    checkAdvance();
     timer.tick();
     //poll the inputs
     dBtn.read();
@@ -424,10 +515,6 @@ void loop()
     checkEncD();
     checkEncC();
     checkEncB();
-    //set the gate outputs
-    setGates();
-    //set the v/oct outputs
-    setPitches();
-    // update the neo pixels
-    setRingPixels();
+    checkEncA();
+   
 }
