@@ -42,6 +42,13 @@ struct Track
 {
     Step steps[16];
     bool gateHigh = false;
+    void clear()
+    {
+        for(int i = 0; i < 16; ++i)
+        {
+            steps[i] = Step();
+        }
+    }
 };
 
 struct Sequence
@@ -332,6 +339,15 @@ void dSwitchPress(BfButton *btn, BfButton::press_pattern_t pattern)
     }
 }
 
+void dSwitchHold(BfButton *btn, BfButton::press_pattern_t pattern)
+{
+    if (pattern == BfButton::LONG_PRESS)
+    {
+        seq.tracks[currentTrack].clear();
+
+    }
+}
+
 void bSwitchPress(BfButton *btn, BfButton::press_pattern_t pattern)
 {
     if (pattern == BfButton::SINGLE_PRESS)
@@ -450,7 +466,7 @@ void setup()
     //Set up buttons
     dBtn.onPress(dSwitchPress)
         .onDoublePress(dSwitchPress)
-        .onPressFor(dSwitchPress, 1000);
+        .onPressFor(dSwitchHold, 1000);
     bBtn.onPress(bSwitchPress)
         .onDoublePress(bSwitchPress) // default timeout
         .onPressFor(bSwitchPress, 1000); // custom timeout for 1 second
