@@ -1,4 +1,3 @@
-
 #include <Adafruit_NeoPixel.h>
 #include <MCP48xx.h>
 #include <arduino-timer.h>
@@ -532,5 +531,4 @@ void loop()
     checkEncC();
     checkEncB();
     checkEncA();
-   
 }

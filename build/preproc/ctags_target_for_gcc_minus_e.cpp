@@ -1,13 +1,12 @@
 # 1 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-
+# 2 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
 # 3 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
 # 4 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
 # 5 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
 # 6 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
 # 7 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
 # 8 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
-# 9 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
-# 33 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+# 32 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
 const uint8_t gatePins[] = {13, 12, A2, A3};
 // Set up buttons
 BfButton dBtn(BfButton::STANDALONE_DIGITAL, 5, false, 0x1);
@@ -510,5 +509,4 @@ void loop()
     checkEncC();
     checkEncB();
     checkEncA();
-
 }
