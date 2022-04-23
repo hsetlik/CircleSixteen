@@ -20,4 +20,6 @@
  /Users/hayden/Documents/Arduino/libraries/ButtonFever/src/BfButton.h \
  /Users/hayden/Documents/Arduino/libraries/ButtonFever/src/BfButtonManager.h \
  /Users/hayden/Documents/Arduino/libraries/ButtonFever/src/BfButton.h \
- /Users/hayden/Documents/Arduino/libraries/RotaryEncoder/src/RotaryEncoder.h
+ /Users/hayden/Documents/Arduino/libraries/RotaryEncoder/src/RotaryEncoder.h \
+ /Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/MCPEncoder.h \
+ /Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/Sequence.h

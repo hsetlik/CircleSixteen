@@ -6,7 +6,9 @@
 # 6 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
 # 7 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
 # 8 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
-# 32 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+# 9 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
+# 10 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
+# 34 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
 const uint8_t gatePins[] = {13, 12, A2, A3};
 // Set up buttons
 BfButton dBtn(BfButton::STANDALONE_DIGITAL, 5, false, 0x1);
@@ -22,38 +24,7 @@ Adafruit_NeoPixel ring(16, 4, ((1 << 6) | (1 << 4) | (0 << 2) | (2)) /*|< Transm
 Adafruit_NeoPixel trk(4, A4, ((1 << 6) | (1 << 4) | (0 << 2) | (2)) /*|< Transmit as G,R,B*/ + 0x0000 /*|< 800 KHz data transmission*/);
 
 //===========================
-// Sequencing logic objects
 
-struct Step
-{
-    bool gate; // whether the step has a note
-    int midiNum; // midi note #
-    int gateLength; // 0-99 as percentage of step length
-    Step()
-    {
-        gate = false;
-        midiNum = 69;
-        gateLength = 80;
-    }
-};
-
-struct Track
-{
-    Step steps[16];
-    bool gateHigh = false;
-    void clear()
-    {
-        for(int i = 0; i < 16; ++i)
-        {
-            steps[i] = Step();
-        }
-    }
-};
-
-struct Sequence
-{
-    Track tracks[4];
-};
 //=========VARIABLES=========================
 auto timer = timer_create_default();
 RotaryEncoder *encD = nullptr;
@@ -65,7 +36,6 @@ int selected = 1;
 unsigned long microsIntoCycle = 0;
 int tempo = 120;
 unsigned long periodMicros = 250;
-int currentTrack = 0;
 bool isPlaying = false;
 bool tempoMode = false; //ENC c can toggle between controlling tempo and gate length
 Sequence seq;
@@ -119,9 +89,9 @@ void setTrackPixel(int index, Hsv color)
 //==============GET PIXEL COLOR
 Hsv getRingPixelColor(int index)
 {
-    Hsv color = forMidiNote(seq.tracks[currentTrack].steps[index].midiNum);
-    bool gate = seq.tracks[currentTrack].steps[index].gate;
-    bool current = index == currentStep;
+    Hsv color = forMidiNote(seq.tracks[seq.currentTrack].steps[index].midiNum);
+    bool gate = seq.tracks[seq.currentTrack].steps[index].gate;
+    bool current = index == seq.currentStep;
     bool on = index == selected;
     if (on)
         return {color.h, color.s, 1.0f};
@@ -137,9 +107,9 @@ Hsv getRingPixelColor(int index)
 Hsv getTrackPixelColor(int index)
 {
     auto color = trackColors[index % 4];
-    if (currentTrack == index)
+    if (seq.currentTrack == index)
         return color;
-    if (seq.tracks[index].steps[currentStep].gate)
+    if (seq.tracks[index].steps[seq.currentStep].gate)
         return {color.h, color.s, 0.45f};
     return {0.0f, 0.0f, 0.0f};
 }
@@ -242,9 +212,9 @@ bool updateOutputs(void *)
 // move to the next step
 void advance()
 {
-    currentStep = currentStep - 1;
-    if (currentStep < 0)
-        currentStep = 15;
+    seq.currentStep = seq.currentStep - 1;
+    if (seq.currentStep < 0)
+        seq.currentStep = 15;
 }
 
 void checkEncD()
@@ -295,8 +265,8 @@ void checkEncA()
         // Serial.println("C Pos:");
         // Serial.println(newPos);
         int difference = newPos - aPos;
-        int newTrack = (currentTrack + difference) % 4;
-        currentTrack = (newTrack < 0) ? 4 + newTrack : newTrack;
+        int newTrack = (seq.currentTrack + difference) % 4;
+        seq.currentTrack = (newTrack < 0) ? 4 + newTrack : newTrack;
         aPos = newPos;
     }
 }
@@ -309,7 +279,7 @@ void checkEncB()
     int newPos = encB->getPosition();
     if (bPos != newPos)
     {
-        auto note = seq.tracks[currentTrack].steps[selected].midiNum;
+        auto note = seq.tracks[seq.currentTrack].steps[selected].midiNum;
         auto newNote = note + (bPos - newPos);
         if (note != newNote)
         {
@@ -319,7 +289,7 @@ void checkEncB()
                 newNote = 0;
             else if (newNote > 127)
                 newNote = 127;
-            seq.tracks[currentTrack].steps[selected].midiNum = newNote;
+            seq.tracks[seq.currentTrack].steps[selected].midiNum = newNote;
         }
         bPos = newPos;
     }
@@ -333,8 +303,8 @@ void dSwitchPress(BfButton *btn, BfButton::press_pattern_t pattern)
     if (pattern == BfButton::SINGLE_PRESS)
     {
         // Serial.println("gate is:");
-        seq.tracks[currentTrack].steps[selected].gate = !seq.tracks[currentTrack].steps[selected].gate;
-        // Serial.println(seq.tracks[currentTrack].steps[currentOn].gate);
+        seq.tracks[seq.currentTrack].steps[selected].gate = !seq.tracks[seq.currentTrack].steps[selected].gate;
+        // Serial.println(seq.tracks[seq.currentTrack].steps[currentOn].gate);
     }
 }
 
@@ -342,7 +312,7 @@ void dSwitchHold(BfButton *btn, BfButton::press_pattern_t pattern)
 {
     if (pattern == BfButton::LONG_PRESS)
     {
-        seq.tracks[currentTrack].clear();
+        seq.tracks[seq.currentTrack].clear();
 
     }
 }
@@ -395,7 +365,7 @@ uint16_t mvForMidiNote(int note)
 bool gateOn(int idx, int trk=0)
 {
     auto step = seq.tracks[trk].steps[idx];
-    if (!step.gate || currentStep != idx)
+    if (!step.gate || seq.currentStep != idx)
         return false;
     //check when the gate for this step should end
     auto endMs = (periodMicros * (step.gateLength / 80));
@@ -403,7 +373,7 @@ bool gateOn(int idx, int trk=0)
 }
 void processTrack(int idx)
 {
-    bool gate = gateOn(currentStep, idx);
+    bool gate = gateOn(seq.currentStep, idx);
     if (gate == seq.tracks[idx].gateHigh)
         return;
     //we know that gate != gateHigh
@@ -411,7 +381,7 @@ void processTrack(int idx)
     {
         digitalWrite(gatePins[idx], 1);
         //set the correct v/oct output
-        setVoltageForTrack(idx, mvForMidiNote(seq.tracks[idx].steps[currentStep].midiNum));
+        setVoltageForTrack(idx, mvForMidiNote(seq.tracks[idx].steps[seq.currentStep].midiNum));
         Serial.print("Note on on track");
         Serial.print(idx);
         Serial.print(" at ");
