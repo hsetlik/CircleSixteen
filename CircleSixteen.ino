@@ -1,3 +1,4 @@
+
 #include <Adafruit_NeoPixel.h>
 #include <MCP48xx.h>
 #include <arduino-timer.h>
@@ -7,6 +8,7 @@
 #include <RotaryEncoder.h>
 #include "MCPEncoder.h"
 #include "Sequence.h"
+#include "RotaryEncOverMCP.h"
 
 #define NUM_STEPS 16
 #define NUM_TRACKS 4
@@ -63,7 +65,6 @@ bool tempoMode = false; //ENC c can toggle between controlling tempo and gate le
 Sequence seq;
 unsigned long lastMicros = 0;
 //=======Color stuff================================
-
 struct Hsv
 {
     float h;

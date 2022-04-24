@@ -1,5 +1,5 @@
 # 1 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-# 2 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
+
 # 3 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
 # 4 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
 # 5 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
@@ -8,7 +8,9 @@
 # 8 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
 # 9 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
 # 10 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
-# 34 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+# 11 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
+# 12 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
+# 36 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
 const uint8_t gatePins[] = {13, 12, A2, A3};
 // Set up buttons
 BfButton dBtn(BfButton::STANDALONE_DIGITAL, 5, false, 0x1);
@@ -41,7 +43,6 @@ bool tempoMode = false; //ENC c can toggle between controlling tempo and gate le
 Sequence seq;
 unsigned long lastMicros = 0;
 //=======Color stuff================================
-
 struct Hsv
 {
     float h;

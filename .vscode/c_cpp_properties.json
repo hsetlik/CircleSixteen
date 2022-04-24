@@ -24,6 +24,10 @@
                 "/Users/hayden/Documents/Arduino/libraries/arduino-timer/src",
                 "/Users/hayden/Documents/Arduino/libraries/ButtonFever/src",
                 "/Users/hayden/Documents/Arduino/libraries/RotaryEncoder/src",
+                "/Users/hayden/Documents/Arduino/libraries/Adafruit_MCP23017_Arduino_Library/src",
+                "/Users/hayden/Documents/Arduino/libraries/Adafruit_BusIO",
+                "/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/libraries/Wire/src",
+                "/Users/hayden/Documents/Arduino/libraries/Rotary",
                 "/Applications/Arduino.app/Contents/Java/hardware/tools/avr/lib/gcc/avr/7.3.0/include",
                 "/Applications/Arduino.app/Contents/Java/hardware/tools/avr/lib/gcc/avr/7.3.0/include-fixed",
                 "/Applications/Arduino.app/Contents/Java/hardware/tools/avr/avr/include"

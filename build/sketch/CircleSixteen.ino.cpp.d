@@ -22,4 +22,15 @@
  /Users/hayden/Documents/Arduino/libraries/ButtonFever/src/BfButton.h \
  /Users/hayden/Documents/Arduino/libraries/RotaryEncoder/src/RotaryEncoder.h \
  /Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/MCPEncoder.h \
- /Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/Sequence.h
+ /Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/Sequence.h \
+ /Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/RotaryEncOverMCP.h \
+ /Users/hayden/Documents/Arduino/libraries/Adafruit_MCP23017_Arduino_Library/src/Adafruit_MCP23X08.h \
+ /Users/hayden/Documents/Arduino/libraries/Adafruit_MCP23017_Arduino_Library/src/Adafruit_MCP23XXX.h \
+ /Users/hayden/Documents/Arduino/libraries/Adafruit_BusIO/Adafruit_BusIO_Register.h \
+ /Users/hayden/Documents/Arduino/libraries/Adafruit_BusIO/Adafruit_I2CDevice.h \
+ /Applications/Arduino.app/Contents/Java/hardware/arduino/avr/libraries/Wire/src/Wire.h \
+ /Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/Stream.h \
+ /Users/hayden/Documents/Arduino/libraries/Adafruit_BusIO/Adafruit_SPIDevice.h \
+ /Users/hayden/Documents/Arduino/libraries/Adafruit_MCP23017_Arduino_Library/src/Adafruit_MCP23X17.h \
+ /Users/hayden/Documents/Arduino/libraries/Adafruit_MCP23017_Arduino_Library/src/Adafruit_MCP23XXX.h \
+ /Users/hayden/Documents/Arduino/libraries/Rotary/Rotary.h

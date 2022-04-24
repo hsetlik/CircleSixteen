@@ -2,7 +2,6 @@
 #define MCPENCODER_H
 
 #include <Arduino.h>
-
 struct Hsv
 {
     float h;
