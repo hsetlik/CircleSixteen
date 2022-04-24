@@ -1,0 +1,3 @@
+[submodule "rotary-encoder-over-mcp-setlik"]
+	path = rotary-encoder-over-mcp-setlik
+	url = git@github.com:hsetlik/rotary-encoder-over-mcp-setlik.git
