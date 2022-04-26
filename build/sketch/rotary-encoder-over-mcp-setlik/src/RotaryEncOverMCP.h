@@ -6,11 +6,13 @@
  *      Author: Maxi
  */
 
+
+
 #ifndef SRC_ROTARYENCOVERMCP_H_
 #define SRC_ROTARYENCOVERMCP_H_
 
 /* Describes new objects based on the Rotary and Adafruit MCP23017 library */
-#include <Adafruit_MCP23017.h>
+#include <Adafruit_MCP23X17.h>
 #include <Rotary.h>
 
 /* function pointer definition */
@@ -25,7 +27,7 @@ typedef void (*rotaryActionFunc)(bool clockwise, int id);
  * */
 class RotaryEncOverMCP {
 public:
-    RotaryEncOverMCP(Adafruit_MCP23017* mcp, byte pinA, byte pinB, rotaryActionFunc actionFunc = nullptr, int id = 0)
+    RotaryEncOverMCP(Adafruit_MCP23X17* mcp, byte pinA, byte pinB, rotaryActionFunc actionFunc = nullptr, int id = 0)
     : rot(pinA, pinB), mcp(mcp),
       pinA(pinA), pinB(pinB),
       actionFunc(actionFunc), id(id) {

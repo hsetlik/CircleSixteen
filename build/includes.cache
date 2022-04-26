@@ -11,6 +11,26 @@
   },
   {
     "Sourcefile": "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/CircleSixteen.ino.cpp",
+    "Include": "Adafruit_MCP23X08.h",
+    "Includepath": "/Users/hayden/Documents/Arduino/libraries/Adafruit_MCP23017_Arduino_Library/src"
+  },
+  {
+    "Sourcefile": "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/CircleSixteen.ino.cpp",
+    "Include": "Adafruit_BusIO_Register.h",
+    "Includepath": "/Users/hayden/Documents/Arduino/libraries/Adafruit_BusIO"
+  },
+  {
+    "Sourcefile": "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/CircleSixteen.ino.cpp",
+    "Include": "Wire.h",
+    "Includepath": "/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/libraries/Wire/src"
+  },
+  {
+    "Sourcefile": "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/CircleSixteen.ino.cpp",
+    "Include": "SPI.h",
+    "Includepath": "/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/libraries/SPI/src"
+  },
+  {
+    "Sourcefile": "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/CircleSixteen.ino.cpp",
     "Include": "Adafruit_NeoPixel.h",
     "Includepath": "/Users/hayden/Documents/Arduino/libraries/Adafruit_NeoPixel"
   },
@@ -18,11 +38,6 @@
     "Sourcefile": "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/CircleSixteen.ino.cpp",
     "Include": "MCP48xx.h",
     "Includepath": "/Users/hayden/Documents/Arduino/libraries/MCP48xx_DAC_Library/src"
-  },
-  {
-    "Sourcefile": "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/CircleSixteen.ino.cpp",
-    "Include": "SPI.h",
-    "Includepath": "/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/libraries/SPI/src"
   },
   {
     "Sourcefile": "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/CircleSixteen.ino.cpp",
@@ -41,26 +56,6 @@
   },
   {
     "Sourcefile": "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/CircleSixteen.ino.cpp",
-    "Include": "Adafruit_MCP23X08.h",
-    "Includepath": "/Users/hayden/Documents/Arduino/libraries/Adafruit_MCP23017_Arduino_Library/src"
-  },
-  {
-    "Sourcefile": "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/CircleSixteen.ino.cpp",
-    "Include": "Adafruit_BusIO_Register.h",
-    "Includepath": "/Users/hayden/Documents/Arduino/libraries/Adafruit_BusIO"
-  },
-  {
-    "Sourcefile": "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/CircleSixteen.ino.cpp",
-    "Include": "Wire.h",
-    "Includepath": "/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/libraries/Wire/src"
-  },
-  {
-    "Sourcefile": "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/CircleSixteen.ino.cpp",
-    "Include": "Rotary.h",
-    "Includepath": "/Users/hayden/Documents/Arduino/libraries/Rotary"
-  },
-  {
-    "Sourcefile": "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/CircleSixteen.ino.cpp",
     "Include": "",
     "Includepath": null
   },
@@ -71,46 +66,6 @@
   },
   {
     "Sourcefile": "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/MCPEncoder.cpp",
-    "Include": "",
-    "Includepath": null
-  },
-  {
-    "Sourcefile": "/Users/hayden/Documents/Arduino/libraries/Adafruit_NeoPixel/Adafruit_NeoPixel.cpp",
-    "Include": "",
-    "Includepath": null
-  },
-  {
-    "Sourcefile": "/Users/hayden/Documents/Arduino/libraries/Adafruit_NeoPixel/esp.c",
-    "Include": "",
-    "Includepath": null
-  },
-  {
-    "Sourcefile": "/Users/hayden/Documents/Arduino/libraries/Adafruit_NeoPixel/esp8266.c",
-    "Include": "",
-    "Includepath": null
-  },
-  {
-    "Sourcefile": "/Users/hayden/Documents/Arduino/libraries/Adafruit_NeoPixel/kendyte_k210.c",
-    "Include": "",
-    "Includepath": null
-  },
-  {
-    "Sourcefile": "/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/libraries/SPI/src/SPI.cpp",
-    "Include": "",
-    "Includepath": null
-  },
-  {
-    "Sourcefile": "/Users/hayden/Documents/Arduino/libraries/ButtonFever/src/BfButton.cpp",
-    "Include": "",
-    "Includepath": null
-  },
-  {
-    "Sourcefile": "/Users/hayden/Documents/Arduino/libraries/ButtonFever/src/BfButtonManager.cpp",
-    "Include": "",
-    "Includepath": null
-  },
-  {
-    "Sourcefile": "/Users/hayden/Documents/Arduino/libraries/RotaryEncoder/src/RotaryEncoder.cpp",
     "Include": "",
     "Includepath": null
   },
@@ -155,7 +110,42 @@
     "Includepath": null
   },
   {
-    "Sourcefile": "/Users/hayden/Documents/Arduino/libraries/Rotary/Rotary.cpp",
+    "Sourcefile": "/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/libraries/SPI/src/SPI.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/hayden/Documents/Arduino/libraries/Adafruit_NeoPixel/Adafruit_NeoPixel.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/hayden/Documents/Arduino/libraries/Adafruit_NeoPixel/esp.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/hayden/Documents/Arduino/libraries/Adafruit_NeoPixel/esp8266.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/hayden/Documents/Arduino/libraries/Adafruit_NeoPixel/kendyte_k210.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/hayden/Documents/Arduino/libraries/ButtonFever/src/BfButton.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/hayden/Documents/Arduino/libraries/ButtonFever/src/BfButtonManager.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/hayden/Documents/Arduino/libraries/RotaryEncoder/src/RotaryEncoder.cpp",
     "Include": "",
     "Includepath": null
   }

@@ -1,4 +1,4 @@
-
+#include <Wire.h>
 #include <Adafruit_NeoPixel.h>
 #include <MCP48xx.h>
 #include <arduino-timer.h>
@@ -8,7 +8,6 @@
 #include <RotaryEncoder.h>
 #include "MCPEncoder.h"
 #include "Sequence.h"
-#include "RotaryEncOverMCP.h"
 
 #define NUM_STEPS 16
 #define NUM_TRACKS 4
@@ -427,18 +426,12 @@ void processTrack(int idx)
 void setup()
 {
     Serial.begin(9600);
-   
     setTempo(tempo);
-
     //Neo Pixel setup
     ring.begin();
     ring.setBrightness(25);
-
     trk.begin();
     trk.setBrightness(25);
-
-    
-
     //Set up encoders
     encD = new RotaryEncoder(DCLK, DDATA, RotaryEncoder::LatchMode::FOUR3);
     encC = new RotaryEncoder(CCLK, CDATA, RotaryEncoder::LatchMode::FOUR3);
