@@ -18,12 +18,10 @@
             "includePath": [
                 "/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino",
                 "/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/variants/eightanaloginputs",
-                "/Users/hayden/Documents/Arduino/libraries/Adafruit_MCP23017_Arduino_Library/src",
-                "/Users/hayden/Documents/Arduino/libraries/Adafruit_BusIO",
                 "/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/libraries/Wire/src",
-                "/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/libraries/SPI/src",
                 "/Users/hayden/Documents/Arduino/libraries/Adafruit_NeoPixel",
                 "/Users/hayden/Documents/Arduino/libraries/MCP48xx_DAC_Library/src",
+                "/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/libraries/SPI/src",
                 "/Users/hayden/Documents/Arduino/libraries/arduino-timer/src",
                 "/Users/hayden/Documents/Arduino/libraries/ButtonFever/src",
                 "/Users/hayden/Documents/Arduino/libraries/RotaryEncoder/src",

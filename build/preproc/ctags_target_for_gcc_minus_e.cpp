@@ -2,18 +2,14 @@
 # 2 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
 # 3 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
 # 4 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
-
-
+# 5 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
+# 6 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
 # 7 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
 # 8 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
 # 9 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
 # 10 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
 # 11 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
-# 12 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
-# 13 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
-# 14 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
-# 15 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino" 2
-# 39 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+# 35 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
 const uint8_t gatePins[] = {13, 12, A2, A3};
 // Set up buttons
 BfButton dBtn(BfButton::STANDALONE_DIGITAL, 5, false, 0x1);

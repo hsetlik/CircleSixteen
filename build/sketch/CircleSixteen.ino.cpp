@@ -1,10 +1,6 @@
 #include <Arduino.h>
 #line 1 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-#include <Adafruit_MCP23X08.h>
-#include <Adafruit_MCP23X17.h>
-#include <Adafruit_MCP23XXX.h>
-
-
+#include <Wire.h>
 #include <Adafruit_NeoPixel.h>
 #include <MCP48xx.h>
 #include <arduino-timer.h>
@@ -102,67 +98,67 @@ const Hsv trackColors[] = {trk1Hsv, trk2Hsv, trk3Hsv, trk4Hsv};
 
 
 // note will be 0 - 128
-#line 103 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+#line 99 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
 Hsv forMidiNote(int note);
-#line 107 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-void setRingPixel(int index, Hsv color);
-#line 111 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-void setTrackPixel(int index, Hsv color);
-#line 116 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-Hsv getRingPixelColor(int index);
-#line 133 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-Hsv getTrackPixelColor(int index);
-#line 144 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-Hsv lerp(float p, Hsv a, Hsv b);
-#line 153 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-uint32_t asRgb(Hsv input);
-#line 161 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-void setRingPixels();
-#line 171 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-void setTrackPixels();
-#line 183 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-void setTempo(int newTempo);
-#line 193 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-void checkPositionD();
-#line 198 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-void checkPositionC();
-#line 203 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-void checkPositionB();
-#line 208 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-void checkPositionA();
-#line 213 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-bool checkAdvance();
-#line 226 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-bool updateOutputs(void *);
-#line 239 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-void advance();
-#line 246 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-void checkEncD();
-#line 266 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-void checkEncC();
-#line 283 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-void checkEncA();
-#line 301 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-void checkEncB();
-#line 325 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-void dSwitchPress(BfButton *btn, BfButton::press_pattern_t pattern);
-#line 337 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-void dSwitchHold(BfButton *btn, BfButton::press_pattern_t pattern);
-#line 346 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-void bSwitchPress(BfButton *btn, BfButton::press_pattern_t pattern);
-#line 356 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-void cSwitchPress(BfButton *btn, BfButton::press_pattern_t pattern);
-#line 365 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-void setVoltageForTrack(int trk, uint16_t mV);
-#line 386 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-uint16_t mvForMidiNote(int note);
-#line 400 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-void processTrack(int idx);
-#line 430 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-void setup();
-#line 490 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
-void loop();
 #line 103 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+void setRingPixel(int index, Hsv color);
+#line 107 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+void setTrackPixel(int index, Hsv color);
+#line 112 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+Hsv getRingPixelColor(int index);
+#line 129 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+Hsv getTrackPixelColor(int index);
+#line 140 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+Hsv lerp(float p, Hsv a, Hsv b);
+#line 149 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+uint32_t asRgb(Hsv input);
+#line 157 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+void setRingPixels();
+#line 167 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+void setTrackPixels();
+#line 179 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+void setTempo(int newTempo);
+#line 189 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+void checkPositionD();
+#line 194 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+void checkPositionC();
+#line 199 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+void checkPositionB();
+#line 204 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+void checkPositionA();
+#line 209 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+bool checkAdvance();
+#line 222 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+bool updateOutputs(void *);
+#line 235 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+void advance();
+#line 242 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+void checkEncD();
+#line 262 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+void checkEncC();
+#line 279 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+void checkEncA();
+#line 297 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+void checkEncB();
+#line 321 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+void dSwitchPress(BfButton *btn, BfButton::press_pattern_t pattern);
+#line 333 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+void dSwitchHold(BfButton *btn, BfButton::press_pattern_t pattern);
+#line 342 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+void bSwitchPress(BfButton *btn, BfButton::press_pattern_t pattern);
+#line 352 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+void cSwitchPress(BfButton *btn, BfButton::press_pattern_t pattern);
+#line 361 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+void setVoltageForTrack(int trk, uint16_t mV);
+#line 382 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+uint16_t mvForMidiNote(int note);
+#line 396 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+void processTrack(int idx);
+#line 426 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+void setup();
+#line 486 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
+void loop();
+#line 99 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSixteen.ino"
 Hsv forMidiNote(int note)
 {
     return pitchColors[note % 12];

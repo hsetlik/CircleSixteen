@@ -51,3 +51,4 @@ build/sketch/MCPEncoder.cpp.d
 build/sketch/MCPEncoder.cpp.o
 build/sketch/MCPEncoder.h
 build/sketch/Sequence.h
+.vscode/c_cpp_properties.json
