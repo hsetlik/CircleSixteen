@@ -1,5 +1,6 @@
-/Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/CircleSeq.ino.cpp.o: \
- /Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/CircleSeq.ino.cpp \
+/Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/libraries/SPI/SPI.cpp.o: \
+ /Applications/Arduino.app/Contents/Java/hardware/arduino/avr/libraries/SPI/src/SPI.cpp \
+ /Applications/Arduino.app/Contents/Java/hardware/arduino/avr/libraries/SPI/src/SPI.h \
  /Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/Arduino.h \
  /Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/binary.h \
  /Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/WCharacter.h \
@@ -11,11 +12,4 @@
  /Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/USBAPI.h \
  /Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/Arduino.h \
  /Applications/Arduino.app/Contents/Java/hardware/arduino/avr/variants/eightanaloginputs/pins_arduino.h \
- /Applications/Arduino.app/Contents/Java/hardware/arduino/avr/variants/eightanaloginputs/../standard/pins_arduino.h \
- /Users/hayden/Documents/Arduino/libraries/MCP48xx_DAC_Library/src/MCP48xx.h \
- /Applications/Arduino.app/Contents/Java/hardware/arduino/avr/libraries/SPI/src/SPI.h \
- /Applications/Arduino.app/Contents/Java/hardware/arduino/avr/libraries/Wire/src/Wire.h \
- /Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/Stream.h \
- /Users/hayden/Documents/Arduino/libraries/Adafruit_NeoPixel/Adafruit_NeoPixel.h \
- /Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/Sequence.h \
- /Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/Hsv.h
+ /Applications/Arduino.app/Contents/Java/hardware/arduino/avr/variants/eightanaloginputs/../standard/pins_arduino.h
