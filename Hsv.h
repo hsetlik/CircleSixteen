@@ -30,15 +30,10 @@ namespace SeqColors
 
     const Hsv pitchColors[] = {cHsv, csHsv, dHsv, dsHsv, eHsv, fHsv, fsHsv, gHsv, gsHsv, aHsv, asHsv, bHsv};
 
+    const Hsv trackColors[] = {dHsv, fHsv, gsHsv, bHsv};
+
     const Hsv stepColor = {330.0f, 1.0f, 0.6f};
     const Hsv selectColor = {230.0f, 1.0f, 0.6f};
 }
-
-
-
-
-
-
-
 
 #endif
