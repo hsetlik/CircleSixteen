@@ -13,12 +13,15 @@
 #define DAC1 8
 #define DAC2 9
 
+#define HALFSTEP_MV 42.626f
+
 const int gatePins[] = {GATEA, GATEB, GATEC, GATED};
 
 
 //=================VARIABLES========================
 Sequence seq;
 bool isPlaying = false;
+bool tempoMode = true;
 //Neo Pixel strips
 Adafruit_NeoPixel ring(16, RING, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel trk(4, TRACK, NEO_GRB + NEO_KHZ800);
@@ -42,16 +45,15 @@ void buttonPressed(int idx)
         }
         case 2:
         {
-            //TODO: toggle between length and tempo mode
-
+            tempoMode = !tempoMode;
+            break;
         }
         case 3:
         {
-
+            //TODO: remember what this is supposed to be for
+            break;
         }
     }
-
-
 }
 void moveEncoder(int idx, bool dir)
 {
@@ -64,7 +66,10 @@ void moveEncoder(int idx, bool dir)
         }
         case 1:
         {
-            seq.shiftTempo(dir);
+            if (tempoMode)
+                seq.shiftTempo(dir);
+            else
+                seq.shiftGateLength(dir);
             break;
         }
         case 2:
@@ -149,8 +154,42 @@ void updateGates()
     }
 
 }
+void setVoltageForTrack(int trk, uint16_t mV)
+{
+    switch(trk)
+    {
+        case 0:
+            dac1.setVoltageA(mV);
+            break;
+        case 1:
+            dac1.setVoltageB(mV);
+            break;
+        case 2:
+            dac2.setVoltageA(mV);
+            break;
+        case 3:
+            dac2.setVoltageB(mV);
+            break;
+        default:
+            break;
+    }
+}
+
+uint16_t mvForMidiNote(int note)
+{
+    return (uint16_t)((float)note * HALFSTEP_MV + 0.5);
+}
+
 void updateDACs()
 {
+    for(int i = 0; i < 4; ++i)
+    {
+        if (seq.tracks[i].steps[seq.currentStep].gate)
+        {
+            auto mv = mvForMidiNote(seq.tracks[i].steps[seq.currentStep].midiNote);
+            setVoltageForTrack(i, mv);
+        }
+    }
 
 }
 
@@ -171,6 +210,20 @@ void setup()
     {
         pinMode(gatePins[i], OUTPUT);
     }
+    dac1.init();
+    dac2.init();
+
+    dac1.turnOnChannelA();
+    dac1.turnOnChannelB();
+
+    dac2.turnOnChannelA();
+    dac2.turnOnChannelB();
+
+    dac1.setGainA(MCP4822::High);
+    dac1.setGainB(MCP4822::High);
+
+    dac2.setGainA(MCP4822::High);
+    dac2.setGainB(MCP4822::High);
 }
 
 void loop()
@@ -181,5 +234,3 @@ void loop()
     updateGates();
     updateDACs();
 }
-
-
