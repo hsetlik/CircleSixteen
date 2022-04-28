@@ -1,4 +1,3 @@
-#line 1 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/Sequence.h"
 #ifndef SEQUENCE_H
 #define SEQUENCE_H
 #include <Arduino.h>
