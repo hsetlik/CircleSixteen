@@ -15,6 +15,9 @@
 #define DAC1 8
 #define DAC2 9
 
+
+
+//this corresponds to an external amplifier with a gain of 2 to meet volt/octave scale
 #define HALFSTEP_MV 42.626f
 
 const int gatePins[] = {GATEA, GATEB, GATEC, GATED};
@@ -31,33 +34,33 @@ Adafruit_NeoPixel trk(4, TRACK, NEO_GRB + NEO_KHZ800);
 MCP4822 dac1(DAC1);
 MCP4822 dac2(DAC2);
 //================EVENT HANDLING====================
-#line 32 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 35 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void buttonPressed(int idx);
-#line 58 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 61 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void moveEncoder(int idx, bool dir);
-#line 88 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 91 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void recieveEvent(int num);
-#line 108 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 111 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void checkAdvance();
-#line 120 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 123 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void advance();
-#line 125 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 128 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void updateRing();
-#line 129 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 132 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void updateTrk();
-#line 133 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 136 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void updateGates();
-#line 157 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 160 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void setVoltageForTrack(int trk, uint16_t mV);
-#line 178 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 185 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 uint16_t mvForMidiNote(int note);
-#line 183 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 190 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void updateDACs();
-#line 197 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 204 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void setup();
-#line 229 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 236 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void loop();
-#line 32 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 35 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void buttonPressed(int idx)
 {
     switch (idx)
@@ -189,15 +192,19 @@ void setVoltageForTrack(int trk, uint16_t mV)
     {
         case 0:
             dac1.setVoltageA(mV);
+            dac1.updateDAC();
             break;
         case 1:
             dac1.setVoltageB(mV);
+            dac1.updateDAC();
             break;
         case 2:
             dac2.setVoltageA(mV);
+            dac2.updateDAC();
             break;
         case 3:
             dac2.setVoltageB(mV);
+            dac2.updateDAC();
             break;
         default:
             break;
@@ -216,10 +223,10 @@ void updateDACs()
         if (seq.tracks[i].steps[seq.currentStep].gate)
         {
             auto mv = mvForMidiNote(seq.tracks[i].steps[seq.currentStep].midiNote);
+
             setVoltageForTrack(i, mv);
         }
     }
-
 }
 
 //====================== setup / loop ===========================

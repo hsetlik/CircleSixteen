@@ -13,6 +13,9 @@
 #define DAC1 8
 #define DAC2 9
 
+
+
+//this corresponds to an external amplifier with a gain of 2 to meet volt/octave scale
 #define HALFSTEP_MV 42.626f
 
 const int gatePins[] = {GATEA, GATEB, GATEC, GATED};
@@ -160,15 +163,19 @@ void setVoltageForTrack(int trk, uint16_t mV)
     {
         case 0:
             dac1.setVoltageA(mV);
+            dac1.updateDAC();
             break;
         case 1:
             dac1.setVoltageB(mV);
+            dac1.updateDAC();
             break;
         case 2:
             dac2.setVoltageA(mV);
+            dac2.updateDAC();
             break;
         case 3:
             dac2.setVoltageB(mV);
+            dac2.updateDAC();
             break;
         default:
             break;
@@ -187,10 +194,10 @@ void updateDACs()
         if (seq.tracks[i].steps[seq.currentStep].gate)
         {
             auto mv = mvForMidiNote(seq.tracks[i].steps[seq.currentStep].midiNote);
+
             setVoltageForTrack(i, mv);
         }
     }
-
 }
 
 //====================== setup / loop ===========================

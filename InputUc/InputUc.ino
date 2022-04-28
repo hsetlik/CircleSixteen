@@ -79,6 +79,7 @@ void handleB (BfButton* btn, BfButton::press_pattern_t pattern)
   Wire.beginTransmission(8);
   Wire.write(0); //low bc not an encoder
   Wire.write(1); //Write button index;
+  Wire.write(0);
   Wire.endTransmission();
   Serial.println("Switch message sent");
 }
@@ -89,6 +90,7 @@ void handleC (BfButton* btn, BfButton::press_pattern_t pattern)
   Wire.beginTransmission(8);
   Wire.write(0); //low bc not an encoder
   Wire.write(2); //Write button index;
+  Wire.write(0);
   Wire.endTransmission();
   Serial.println("Switch message sent");
 }
@@ -99,6 +101,7 @@ void handleD (BfButton* btn, BfButton::press_pattern_t pattern)
   Wire.beginTransmission(8);
   Wire.write(0); //low bc not an encoder
   Wire.write(3); //Write button index;
+  Wire.write(0);
   Wire.endTransmission();
   Serial.println("Switch message sent");
 }
