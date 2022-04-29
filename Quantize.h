@@ -6,6 +6,7 @@ namespace Quantize
 {
     enum class ScaleMode
     {
+        Off=0,
         Ionian,
         Dorian,
         Phrygian,
@@ -49,6 +50,9 @@ namespace Quantize
         TrackQuantizer(uint8_t root, ScaleMode mode);
         void setRoot(uint8_t root);
         void setMode(ScaleMode m);
+        uint8_t processNote(uint8_t note);
+        void nextMode();
+        void prevMode();
     private:
         uint8_t quantizeUp(uint8_t note);
         uint8_t quantizeDown(uint8_t note);

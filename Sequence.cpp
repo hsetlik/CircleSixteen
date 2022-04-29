@@ -5,6 +5,11 @@ Step::Step()
     gate = false;
     gateLength = 80;
 }
+//==========================
+int Track::getNote(uint8_t idx)
+{
+    return quant.processNote(idx);
+}
 //========================
 Sequence::Sequence()
 {
@@ -37,7 +42,7 @@ Hsv Sequence::getRingPixelColor(int step, int trk)
     if (step == currentStep)
         return SeqColors::stepColor;
     auto s = tracks[trk].steps[step];
-    auto color = s.getBaseColor();
+    auto color = Hsv::forMidiNote(tracks[trk].quant.processNote(s.midiNote));
     if (step == selected && s.gate)
     {
         return {color.h, color.s, 1.0f};

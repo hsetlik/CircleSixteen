@@ -55,7 +55,8 @@ void buttonPressed(int idx)
         }
         case 3:
         {
-            //TODO: remember what this is supposed to be for
+            quantizeMode = !quantizeMode;
+            //In quantize mode, the track selection encoder instead controls the quantize mode
             break;
         }
     }
@@ -189,8 +190,7 @@ void updateDACs()
     {
         if (seq.tracks[i].steps[seq.currentStep].gate)
         {
-            auto mv = mvForMidiNote(seq.tracks[i].steps[seq.currentStep].midiNote);
-
+            auto mv = mvForMidiNote(seq.tracks[i].getNote((uint8_t)seq.currentStep));
             setVoltageForTrack(i, mv);
         }
     }

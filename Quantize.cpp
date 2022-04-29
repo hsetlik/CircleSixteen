@@ -17,7 +17,7 @@ bool Quantize::inKey(uint8_t rootMidi, uint8_t noteMidi, const uint8_t* degrees)
 //==========QUANTIZER====================================================================
 Quantize::TrackQuantizer::TrackQuantizer() :
 rootDegree(0),
-mode(ScaleMode::Ionian)
+mode(ScaleMode::Off)
 {
     setValidNotes();
 }
@@ -28,7 +28,6 @@ mode(sMode)
 {
     setValidNotes();
 }
-
 
 void Quantize::TrackQuantizer::setValidNotes()
 {
@@ -87,6 +86,11 @@ uint8_t Quantize::TrackQuantizer::nearestValid(uint8_t note)
     return (dUpper > dLower) ? dLower : dUpper;
 }
 
+uint8_t Quantize::TrackQuantizer::processNote(uint8_t note)
+{
+    return (mode == ScaleMode::Off) ? note : nearestValid(note);
+}
+
 void Quantize::TrackQuantizer::setMode(ScaleMode m)
 {
     mode = m;
@@ -97,5 +101,20 @@ void Quantize::TrackQuantizer::setRoot(uint8_t note)
 {
     rootDegree = note % 12;
     setValidNotes();
+}
+
+void Quantize::TrackQuantizer::nextMode()
+{
+    int val = ((int) mode + 1) % 8;
+    mode = (ScaleMode)val;
+    setMode((ScaleMode) val);
+}
+
+void Quantize::TrackQuantizer::prevMode()
+{
+    int val = ((int)mode - 1) % 8;
+    if(val < 0)
+        val += 8;
+    setMode((ScaleMode)val);
 }
 

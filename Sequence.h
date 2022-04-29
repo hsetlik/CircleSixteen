@@ -2,6 +2,7 @@
 #define SEQUENCE_H
 #include <Arduino.h>
 #include "Hsv.h"
+#include "Quantize.h"
 
 #define MIN_TEMPO 20
 #define MAX_TEMPO 300
@@ -27,6 +28,8 @@ struct Track
 {
     bool gateHigh = false;
     Step steps[16];
+    Quantize::TrackQuantizer quant;
+    int getNote(uint8_t idx);
 };
 
 class Sequence

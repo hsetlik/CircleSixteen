@@ -10,6 +10,7 @@ struct Hsv
     float s;
     float v;
     uint32_t asRgb();
+    static Hsv forMidiNote(uint8_t note);
 };
 
 namespace SeqColors
