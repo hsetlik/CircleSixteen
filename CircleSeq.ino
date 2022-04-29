@@ -25,6 +25,8 @@ const int gatePins[] = {GATEA, GATEB, GATEC, GATED};
 Sequence seq;
 bool isPlaying = false;
 bool tempoMode = true;
+//TODO: set up quantize mode
+bool quantizeMode = false;
 //Neo Pixel strips
 Adafruit_NeoPixel ring(16, RING, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel trk(4, TRACK, NEO_GRB + NEO_KHZ800);
@@ -88,19 +90,15 @@ void moveEncoder(int idx, bool dir)
     }
 
 }
+//===========I2C input handling=================================
 void recieveEvent(int num)
 {
-    //Serial.print("recieved message from ");
     bool isEncoder = Wire.read() == 1;
-    //Serial.print((isEncoder) ? "encoder " : "button ");
     int idx = Wire.read();
-    //Serial.println(idx);
     bool dir = Wire.read() == 1;
     if(isEncoder)
     {
         moveEncoder(idx, dir);
-        //Serial.print("Direction: ");
-        //Serial.println(dir);
     }
     else
     {
@@ -153,9 +151,7 @@ void updateGates()
             trk->gateHigh = true;
             digitalWrite(gatePins[i], HIGH);
         }
-
     }
-
 }
 void setVoltageForTrack(int trk, uint16_t mV)
 {
