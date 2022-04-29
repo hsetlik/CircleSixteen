@@ -12,6 +12,8 @@
 #define GATE_MAX 99
 #define GATE_MIN 5
 
+
+
 struct Step
 {
     int midiNote;
