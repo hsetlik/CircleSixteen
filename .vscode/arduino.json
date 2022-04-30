@@ -4,5 +4,5 @@
     "configuration": "cpu=atmega328",
     "board": "arduino:avr:nano",
     "programmer": "arduino:avrispmkii",
-    "port": "/dev/tty.usbserial-1420"
+    "port": "/dev/tty.usbserial-1410"
 }

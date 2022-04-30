@@ -36,6 +36,16 @@ namespace SeqColors
 
     const Hsv stepColor = {330.0f, 1.0f, 0.6f};
     const Hsv selectColor = {230.0f, 1.0f, 0.6f};
+
+    const Hsv ionianHsv = {0.0f, 1.0f, 0.5f};
+    const Hsv dorianHsv = {51.429f, 1.0f, 0.5f};
+    const Hsv phrygianHsv = {102.858f, 1.0f, 0.5f};
+    const Hsv lydianHsv = {154.287f, 1.0f, 0.5f};
+    const Hsv mixolydianHsv = {205.716f, 1.0f, 0.5f};
+    const Hsv aeolianHsv = {257.145f, 1.0f, 0.5f};
+    const Hsv locrianHsv = {308.574f, 1.0f, 0.5f};
+
+    const Hsv modeColors[] = {ionianHsv, dorianHsv, phrygianHsv, lydianHsv, mixolydianHsv, aeolianHsv, locrianHsv};
 }
 
 #endif

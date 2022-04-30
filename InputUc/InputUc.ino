@@ -41,6 +41,8 @@
 #define D1 8
 #define D2 9
 
+#define RST A3;
+
 
 // Setup a RotaryEncoder with 4 steps per latch for the 2 signal input pins:
 // RotaryEncoder encoderA(A1, A2, RotaryEncoder::LatchMode::FOUR3);

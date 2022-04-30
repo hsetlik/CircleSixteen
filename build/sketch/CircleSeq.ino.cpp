@@ -6,8 +6,8 @@
 #include <Adafruit_NeoPixel.h>
 #include "Sequence.h"
 
-#define RING 2
-#define TRACK 3
+#define RING 3
+#define TRACK 2
 #define GATEA 4
 #define GATEB 5
 #define GATEC 6
@@ -15,13 +15,12 @@
 #define DAC1 8
 #define DAC2 9
 
-
+#define RESET_PIN A0
 
 //this corresponds to an external amplifier with a gain of 2 to meet volt/octave scale
 #define HALFSTEP_MV 42.626f
 
 const int gatePins[] = {GATEA, GATEB, GATEC, GATED};
-
 
 //=================VARIABLES========================
 Sequence seq;
@@ -36,33 +35,33 @@ Adafruit_NeoPixel trk(4, TRACK, NEO_GRB + NEO_KHZ800);
 MCP4822 dac1(DAC1);
 MCP4822 dac2(DAC2);
 //================EVENT HANDLING====================
-#line 37 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 36 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void buttonPressed(int idx);
 #line 64 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void moveEncoder(int idx, bool dir);
-#line 98 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 99 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void recieveEvent(int num);
-#line 113 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 114 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void checkAdvance();
-#line 125 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 126 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void advance();
-#line 130 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 131 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void updateRing();
-#line 134 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 135 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void updateTrk();
-#line 138 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 139 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void updateGates();
-#line 160 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 161 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void setVoltageForTrack(int trk, uint16_t mV);
-#line 185 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 186 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 uint16_t mvForMidiNote(int note);
-#line 190 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 191 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void updateDACs();
-#line 203 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 204 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void setup();
-#line 235 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 243 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void loop();
-#line 37 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 36 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void buttonPressed(int idx)
 {
     switch (idx)
@@ -90,6 +89,7 @@ void buttonPressed(int idx)
         }
     }
 }
+
 void moveEncoder(int idx, bool dir)
 {
     switch (idx)
@@ -101,7 +101,9 @@ void moveEncoder(int idx, bool dir)
         }
         case 1:
         {
-            if (tempoMode)
+            if(quantizeMode)
+                seq.shiftQuantRoot(dir);
+            else if (tempoMode)
                 seq.shiftTempo(dir);
             else
                 seq.shiftGateLength(dir);
@@ -121,7 +123,6 @@ void moveEncoder(int idx, bool dir)
             break;
         }
     }
-
 }
 //===========I2C input handling=================================
 void recieveEvent(int num)
@@ -231,6 +232,8 @@ void updateDACs()
 //====================== setup / loop ===========================
 void setup()
 {
+    digitalWrite(RESET_PIN, HIGH);
+    pinMode(RESET_PIN, OUTPUT);
     Serial.begin(9600);
 	Wire.begin(8);
     Wire.onReceive(recieveEvent);
@@ -259,6 +262,11 @@ void setup()
 
     dac2.setGainA(MCP4822::High);
     dac2.setGainB(MCP4822::High);
+    //reset the input microcontroller in case of boot issues
+    delay(50);
+    digitalWrite(RESET_PIN, LOW);
+    delay(5);
+    digitalWrite(RESET_PIN, HIGH);
 }
 
 void loop()
