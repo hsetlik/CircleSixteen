@@ -69,7 +69,7 @@ void Sequence::setTrackLeds(Adafruit_NeoPixel* pixels)
     pixels->show();
 }
 
-Hsv Sequence::getTrackPixelColor(int trk)
+Hsv Sequence::getTrackPixelColor(int trk, bool quantMode)
 {
     auto base = SeqColors::trackColors[trk % 4];
     if (currentTrack == trk)
@@ -136,4 +136,9 @@ void Sequence::shiftQuantize(bool dir)
         tracks[currentTrack].quant.nextMode();
     else
         tracks[currentTrack].quant.prevMode();
+}
+
+void Sequence::shiftQuantRoot(bool dir)
+{
+    tracks[currentTrack].quant.shiftRoot(dir);
 }

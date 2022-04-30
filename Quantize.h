@@ -52,6 +52,14 @@ namespace Quantize
         uint8_t processNote(uint8_t note);
         void nextMode();
         void prevMode();
+        void shiftRoot(bool dir)
+        {
+            int newRoot = (dir) ? rootDegree + 1 : rootDegree - 1;
+            if (newRoot < 0)
+                newRoot += 12;
+            rootDegree = (uint8_t)newRoot;
+            setValidNotes();
+        }
     private:
         uint8_t quantizeUp(uint8_t note);
         uint8_t quantizeDown(uint8_t note);

@@ -14,10 +14,10 @@ mode(sMode)
     setValidNotes();
 }
 
+//calculates allowed notes- needs to be called every time the root or mode change
 void Quantize::TrackQuantizer::setValidNotes()
 {
     int notesAdded = 0;
-    //determine whether each is included and add it to the array
     for(int i = 1; i < 8; ++i)
     {
         auto base = rootDegree + MajorModes[(int)mode][i];
@@ -41,7 +41,6 @@ uint8_t Quantize::TrackQuantizer::quantizeUp(uint8_t note)
     }
     return 0;
 }
-
 
 uint8_t Quantize::TrackQuantizer::quantizeDown(uint8_t note)
 {

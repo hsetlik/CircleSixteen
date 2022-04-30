@@ -13,13 +13,10 @@
 #define DAC1 8
 #define DAC2 9
 
-
-
 //this corresponds to an external amplifier with a gain of 2 to meet volt/octave scale
 #define HALFSTEP_MV 42.626f
 
 const int gatePins[] = {GATEA, GATEB, GATEC, GATED};
-
 
 //=================VARIABLES========================
 Sequence seq;
@@ -61,6 +58,7 @@ void buttonPressed(int idx)
         }
     }
 }
+
 void moveEncoder(int idx, bool dir)
 {
     switch (idx)
@@ -72,7 +70,9 @@ void moveEncoder(int idx, bool dir)
         }
         case 1:
         {
-            if (tempoMode)
+            if(quantizeMode)
+                seq.shiftQuantRoot(dir);
+            else if (tempoMode)
                 seq.shiftTempo(dir);
             else
                 seq.shiftGateLength(dir);
@@ -92,7 +92,6 @@ void moveEncoder(int idx, bool dir)
             break;
         }
     }
-
 }
 //===========I2C input handling=================================
 void recieveEvent(int num)
