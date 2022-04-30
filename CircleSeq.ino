@@ -4,8 +4,8 @@
 #include <Adafruit_NeoPixel.h>
 #include "Sequence.h"
 
-#define RING 2
-#define TRACK 3
+#define RING 3
+#define TRACK 2
 #define GATEA 4
 #define GATEB 5
 #define GATEC 6
