@@ -85,7 +85,10 @@ void moveEncoder(int idx, bool dir)
         }
         case 3:
         {
-            seq.shiftTrack(dir);
+            if (quantizeMode)
+                seq.shiftQuantize(dir);
+            else
+                seq.shiftTrack(dir);
             break;
         }
     }

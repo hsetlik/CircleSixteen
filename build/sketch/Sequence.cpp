@@ -6,6 +6,11 @@ Step::Step()
     gate = false;
     gateLength = 80;
 }
+//==========================
+int Track::getNote(uint8_t idx)
+{
+    return quant.processNote(idx);
+}
 //========================
 Sequence::Sequence()
 {
@@ -38,7 +43,7 @@ Hsv Sequence::getRingPixelColor(int step, int trk)
     if (step == currentStep)
         return SeqColors::stepColor;
     auto s = tracks[trk].steps[step];
-    auto color = s.getBaseColor();
+    auto color = Hsv::forMidiNote(tracks[trk].quant.processNote(s.midiNote));
     if (step == selected && s.gate)
     {
         return {color.h, color.s, 1.0f};
@@ -74,6 +79,9 @@ Hsv Sequence::getTrackPixelColor(int trk)
         return {base.h, base.s, 0.35f};
     return {0.0, 0.0, 0.0};
 }
+
+
+//============Encoder callbacks========================
 
 void Sequence::shiftSelected(bool dir)
 {
@@ -121,4 +129,12 @@ void Sequence::shiftGateLength(bool dir)
     if (length < GATE_MIN)
         length = GATE_MIN;
     tracks[currentTrack].steps[selected].gateLength = length;
+}
+
+void Sequence::shiftQuantize(bool dir)
+{
+    if (dir)
+        tracks[currentTrack].quant.nextMode();
+    else
+        tracks[currentTrack].quant.prevMode();
 }

@@ -1,3 +1,4 @@
+#line 1 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/Quantize.cpp"
 #include "Quantize.h"
 //==========QUANTIZER====================================================================
 Quantize::TrackQuantizer::TrackQuantizer() :

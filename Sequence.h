@@ -52,6 +52,7 @@ public:
     void shiftNote(bool dir);
     void shiftTrack(bool dir);
     void shiftGateLength(bool dir);
+    void shiftQuantize(bool dir);
 private:
     Hsv getRingPixelColor(int step, int trk);
     Hsv getTrackPixelColor(int trk);

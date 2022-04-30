@@ -79,6 +79,9 @@ Hsv Sequence::getTrackPixelColor(int trk)
     return {0.0, 0.0, 0.0};
 }
 
+
+//============Encoder callbacks========================
+
 void Sequence::shiftSelected(bool dir)
 {
     auto newPos = (dir) ? selected + 1 : selected - 1;
@@ -125,4 +128,12 @@ void Sequence::shiftGateLength(bool dir)
     if (length < GATE_MIN)
         length = GATE_MIN;
     tracks[currentTrack].steps[selected].gateLength = length;
+}
+
+void Sequence::shiftQuantize(bool dir)
+{
+    if (dir)
+        tracks[currentTrack].quant.nextMode();
+    else
+        tracks[currentTrack].quant.prevMode();
 }

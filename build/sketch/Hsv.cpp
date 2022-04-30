@@ -8,3 +8,9 @@ uint32_t Hsv::asRgb()
         (uint8_t)(s * 255.0f), 
         (uint8_t)(v * 255.0f));
 }
+
+Hsv Hsv::forMidiNote(uint8_t note)
+{
+    return SeqColors::pitchColors[note % 12];
+
+}

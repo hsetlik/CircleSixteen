@@ -3,6 +3,7 @@
 #define SEQUENCE_H
 #include <Arduino.h>
 #include "Hsv.h"
+#include "Quantize.h"
 
 #define MIN_TEMPO 20
 #define MAX_TEMPO 300
@@ -12,6 +13,8 @@
 
 #define GATE_MAX 99
 #define GATE_MIN 5
+
+
 
 struct Step
 {
@@ -26,6 +29,8 @@ struct Track
 {
     bool gateHigh = false;
     Step steps[16];
+    Quantize::TrackQuantizer quant;
+    int getNote(uint8_t idx);
 };
 
 class Sequence
@@ -48,6 +53,7 @@ public:
     void shiftNote(bool dir);
     void shiftTrack(bool dir);
     void shiftGateLength(bool dir);
+    void shiftQuantize(bool dir);
 private:
     Hsv getRingPixelColor(int step, int trk);
     Hsv getTrackPixelColor(int trk);

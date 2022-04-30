@@ -18,4 +18,5 @@
  /Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/Stream.h \
  /Users/hayden/Documents/Arduino/libraries/Adafruit_NeoPixel/Adafruit_NeoPixel.h \
  /Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/Sequence.h \
- /Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/Hsv.h
+ /Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/Hsv.h \
+ /Users/hayden/Desktop/Electronics/Code/CircleSixteen/build/sketch/Quantize.h

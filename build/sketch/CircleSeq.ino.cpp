@@ -27,6 +27,8 @@ const int gatePins[] = {GATEA, GATEB, GATEC, GATED};
 Sequence seq;
 bool isPlaying = false;
 bool tempoMode = true;
+//TODO: set up quantize mode
+bool quantizeMode = false;
 //Neo Pixel strips
 Adafruit_NeoPixel ring(16, RING, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel trk(4, TRACK, NEO_GRB + NEO_KHZ800);
@@ -34,21 +36,21 @@ Adafruit_NeoPixel trk(4, TRACK, NEO_GRB + NEO_KHZ800);
 MCP4822 dac1(DAC1);
 MCP4822 dac2(DAC2);
 //================EVENT HANDLING====================
-#line 35 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 37 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void buttonPressed(int idx);
-#line 61 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 64 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void moveEncoder(int idx, bool dir);
-#line 91 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 98 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void recieveEvent(int num);
-#line 111 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 113 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void checkAdvance();
-#line 123 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 125 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void advance();
-#line 128 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 130 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void updateRing();
-#line 132 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 134 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void updateTrk();
-#line 136 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 138 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void updateGates();
 #line 160 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void setVoltageForTrack(int trk, uint16_t mV);
@@ -56,11 +58,11 @@ void setVoltageForTrack(int trk, uint16_t mV);
 uint16_t mvForMidiNote(int note);
 #line 190 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void updateDACs();
-#line 204 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 203 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void setup();
-#line 236 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 235 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void loop();
-#line 35 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
+#line 37 "/Users/hayden/Desktop/Electronics/Code/CircleSixteen/CircleSeq.ino"
 void buttonPressed(int idx)
 {
     switch (idx)
@@ -82,7 +84,8 @@ void buttonPressed(int idx)
         }
         case 3:
         {
-            //TODO: remember what this is supposed to be for
+            quantizeMode = !quantizeMode;
+            //In quantize mode, the track selection encoder instead controls the quantize mode
             break;
         }
     }
@@ -111,25 +114,24 @@ void moveEncoder(int idx, bool dir)
         }
         case 3:
         {
-            seq.shiftTrack(dir);
+            if (quantizeMode)
+                seq.shiftQuantize(dir);
+            else
+                seq.shiftTrack(dir);
             break;
         }
     }
 
 }
+//===========I2C input handling=================================
 void recieveEvent(int num)
 {
-    //Serial.print("recieved message from ");
     bool isEncoder = Wire.read() == 1;
-    //Serial.print((isEncoder) ? "encoder " : "button ");
     int idx = Wire.read();
-    //Serial.println(idx);
     bool dir = Wire.read() == 1;
     if(isEncoder)
     {
         moveEncoder(idx, dir);
-        //Serial.print("Direction: ");
-        //Serial.println(dir);
     }
     else
     {
@@ -182,9 +184,7 @@ void updateGates()
             trk->gateHigh = true;
             digitalWrite(gatePins[i], HIGH);
         }
-
     }
-
 }
 void setVoltageForTrack(int trk, uint16_t mV)
 {
@@ -222,8 +222,7 @@ void updateDACs()
     {
         if (seq.tracks[i].steps[seq.currentStep].gate)
         {
-            auto mv = mvForMidiNote(seq.tracks[i].steps[seq.currentStep].midiNote);
-
+            auto mv = mvForMidiNote(seq.tracks[i].getNote((uint8_t)seq.currentStep));
             setVoltageForTrack(i, mv);
         }
     }
