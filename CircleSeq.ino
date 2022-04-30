@@ -208,8 +208,8 @@ void setup()
     trk.begin();
     ring.begin();
 
-    trk.setBrightness(40);
-    ring.setBrightness(40);
+    trk.setBrightness(30);
+    ring.setBrightness(30);
 
     for(int i = 0; i < 4; ++i)
     {
