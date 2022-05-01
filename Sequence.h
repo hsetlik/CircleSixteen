@@ -13,8 +13,6 @@
 #define GATE_MAX 99
 #define GATE_MIN 5
 
-
-
 struct Step
 {
     int midiNote;
@@ -47,6 +45,7 @@ public:
     void setRing(Adafruit_NeoPixel* pixels);
     void setTrackLeds(Adafruit_NeoPixel* pixels, bool quantMode=false);
     unsigned long lastMicros = 0;
+    //Rotary encoder handlers
     void shiftSelected(bool dir);
     void shiftTempo(bool dir);
     void shiftNote(bool dir);
@@ -54,7 +53,6 @@ public:
     void shiftGateLength(bool dir);
     void shiftQuantizeMode(bool dir);
     void shiftQuantRoot(bool dir);
-    void clearTrack(uint8_t trk);
 private:
     Hsv getRingPixelColor(int step, int trk);
     Hsv getTrackPixelColor(int trk, bool quantMode=false);

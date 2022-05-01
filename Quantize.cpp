@@ -49,11 +49,47 @@ uint8_t Quantize::TrackQuantizer::processNote(uint8_t note)
     return noteLut[note];
 }
 
+void Quantize::TrackQuantizer::shiftRoot(bool dir)
+{
+    int newRoot = (dir) ? rootDegree + 1 : rootDegree - 1;
+    if (newRoot < 0)
+        newRoot += 12;
+    rootDegree = (uint8_t)newRoot;
+    calculateLut();
+}
+
+const uint8_t* Quantize::TrackQuantizer::getDegrees(ScaleMode mode)
+{
+    auto idx = (uint8_t)mode - 1;
+    return MajorModes[idx];
+}
+uint8_t Quantize::TrackQuantizer::nearestTrueIndex(bool* table, uint8_t idx)
+{
+    if(table[idx])
+        return idx;
+    auto upper = idx;
+    auto lower = idx;
+    while (upper < NUM_MIDI_NOTES && lower > 0)
+    {
+        if (table[upper])
+            return upper;
+        if (table[lower])
+            return lower;
+        ++upper;
+        --lower;
+    }
+    return 0;
+}
+const uint8_t* Quantize::TrackQuantizer::getDegrees(ScaleMode mode)
+        {
+            auto idx = (uint8_t)mode - 1;
+            return MajorModes[idx];
+        }
+
 void Quantize::TrackQuantizer::setMode(ScaleMode m)
 {
     mode = m;
-    if (mode != ScaleMode::Off)
-        calculateLut();
+    calculateLut();
 }
 
 void Quantize::TrackQuantizer::setRoot(uint8_t note)

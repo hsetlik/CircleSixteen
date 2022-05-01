@@ -55,39 +55,12 @@ namespace Quantize
         uint8_t processNote(uint8_t note);
         void nextMode();
         void prevMode();
-        void shiftRoot(bool dir)
-        {
-            int newRoot = (dir) ? rootDegree + 1 : rootDegree - 1;
-            if (newRoot < 0)
-                newRoot += 12;
-            rootDegree = (uint8_t)newRoot;
-            calculateLut();
-        }
+        void shiftRoot(bool dir);
         ScaleMode getMode() {return mode; }
-        static const uint8_t* getDegrees(ScaleMode mode)
-        {
-            auto idx = (uint8_t)mode - 1;
-            return MajorModes[idx];
-        }
-        static uint8_t nearestTrueIndex(bool* table, uint8_t idx)
-        {
-            if(table[idx])
-                return idx;
-            auto upper = idx;
-            auto lower = idx;
-            while (upper < NUM_MIDI_NOTES && lower > 0)
-            {
-                if (table[upper])
-                    return upper;
-                if (table[lower])
-                    return lower;
-                ++upper;
-                --lower;
-            }
-            return 0;
-        }
     private:
-        //updates the list on valid notes in constructor or on settings change
+        static const uint8_t* getDegrees(ScaleMode mode);
+        static uint8_t nearestTrueIndex(bool* table, uint8_t idx);
+       //updates the list on valid notes in constructor or on settings change
         void calculateLut();
         uint8_t rootDegree;
         ScaleMode mode;
