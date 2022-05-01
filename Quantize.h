@@ -2,8 +2,11 @@
 #define QUANTUZE_H
 #include <Arduino.h>
 
+#define NUM_MIDI_NOTES 88
+
 namespace Quantize
 {
+
     enum ScaleMode
     {
         Off=0,
@@ -58,19 +61,38 @@ namespace Quantize
             if (newRoot < 0)
                 newRoot += 12;
             rootDegree = (uint8_t)newRoot;
-            setValidNotes();
+            calculateLut();
         }
         ScaleMode getMode() {return mode; }
+        static const uint8_t* getDegrees(ScaleMode mode)
+        {
+            auto idx = (uint8_t)mode - 1;
+            return MajorModes[idx];
+        }
+        static uint8_t nearestTrueIndex(bool* table, uint8_t idx)
+        {
+            if(table[idx])
+                return idx;
+            auto upper = idx;
+            auto lower = idx;
+            while (upper < NUM_MIDI_NOTES && lower > 0)
+            {
+                if (table[upper])
+                    return upper;
+                if (table[lower])
+                    return lower;
+                ++upper;
+                --lower;
+            }
+            return 0;
+        }
     private:
-        uint8_t quantizeUp(uint8_t note);
-        uint8_t quantizeDown(uint8_t note);
-        uint8_t nearestValid(uint8_t note);
         //updates the list on valid notes in constructor or on settings change
-        void setValidNotes();
+        void calculateLut();
         uint8_t rootDegree;
         ScaleMode mode;
-        //10 octaves
-        uint8_t validNotes[70];
+        //10 octaves- one corresponding to each midi note
+        uint8_t noteLut[NUM_MIDI_NOTES];
     };   
 }
 #endif
