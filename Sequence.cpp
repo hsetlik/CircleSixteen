@@ -6,9 +6,22 @@ Step::Step()
     gateLength = 80;
 }
 //==========================
-int Track::getNote(uint8_t idx)
+uint8_t Track::getNote(uint8_t idx)
 {
     return quant.processNote(steps[idx].midiNote);
+}
+
+uint8_t Track::getStepLength(uint8_t step)
+{
+    if (!steps[step].gate)
+        return 0;
+    uint8_t freeSteps = 0;
+    while (!steps[step % 16].gate)
+    {
+        ++freeSteps;
+        ++step;
+    }
+    return freeSteps;
 }
 //========================
 Sequence::Sequence()
@@ -117,7 +130,7 @@ void Sequence::shiftNote(bool dir)
     else if(note >= MIDI_MIN)
         --note;
     tracks[currentTrack].steps[selected].midiNote = note; 
-    Serial.println(note);
+    //Serial.println(note);
 }
 
 void Sequence::shiftTrack(bool dir)

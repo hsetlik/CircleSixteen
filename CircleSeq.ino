@@ -139,20 +139,21 @@ void updateGates()
 {
     if (!isPlaying)
         return;
+    auto now = micros();
     for(int t = 0; t < 4; ++t)
     {
         auto& trk = seq.tracks[t];
         auto& step = trk.steps[seq.currentStep];
-        auto endMicros = (long)seq.periodMicros * (float)((float)step.gateLength / 100.f);
-        if(trk.gateHigh && step.gate && seq.microsIntoCycle <= endMicros)
+        auto endMicros = seq.lastMicros + (long)seq.periodMicros * (long)((float)step.gateLength / 100.f);
+        if(trk.gateHigh && step.gate && now <= endMicros)
             continue;
-        if (trk.gateHigh && step.gate && seq.microsIntoCycle > endMicros)
+        if (trk.gateHigh && step.gate && now > endMicros)
         {
             //turn gate off
             digitalWrite(gatePins[t], LOW);
             trk.gateHigh = false;
         }
-        else if (!trk.gateHigh && step.gate && seq.microsIntoCycle <= endMicros)
+        else if (!trk.gateHigh && step.gate && now <= endMicros)
         {
             //turn gate on
             digitalWrite(gatePins[t], HIGH);

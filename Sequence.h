@@ -29,7 +29,9 @@ struct Track
     bool gateHigh = false;
     Step steps[16];
     Quantize::TrackQuantizer quant;
-    int getNote(uint8_t idx);
+    uint8_t getNote(uint8_t idx);
+    //Returns 0 is gate is off, returns 1 + number of empty sequence steps following the index if gate is on
+    uint8_t getStepLength(uint8_t step);
 };
 
 class Sequence
