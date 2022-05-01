@@ -37,7 +37,9 @@ void buttonPressed(int idx)
     {
         case 0: //handle play/stop
         {
-            isPlaying = !isPlaying;
+            quantizeMode = !quantizeMode;
+            Serial.println("Quantize mode is:");
+            Serial.println(quantizeMode ? "On" : "Off");
             break;
         }
         case 1: //handle gate toggling
@@ -52,8 +54,7 @@ void buttonPressed(int idx)
         }
         case 3:
         {
-            quantizeMode = !quantizeMode;
-            //In quantize mode, the track selection encoder instead controls the quantize mode
+            isPlaying = !isPlaying;
             break;
         }
     }
@@ -80,15 +81,15 @@ void moveEncoder(int idx, bool dir)
         }
         case 2:
         {
-            seq.shiftNote(dir);
+            seq.shiftNote(!dir);
             break;
         }
         case 3:
         {
             if (quantizeMode)
-                seq.shiftQuantize(dir);
+                seq.shiftQuantizeMode(dir);
             else
-                seq.shiftTrack(dir);
+                seq.shiftTrack(!dir);
             break;
         }
     }
@@ -123,7 +124,7 @@ void checkAdvance()
 }
 void advance()
 {
-    seq.currentStep = (seq.currentStep < 15) ? seq.currentStep + 1 : 0;
+    seq.currentStep = (seq.currentStep > 0) ? seq.currentStep - 1 : 15;
 }
 //======================OUTPUT HANDLING==========================
 void updateRing()
@@ -132,7 +133,7 @@ void updateRing()
 }
 void updateTrk()
 {
-    seq.setTrackLeds(&trk);
+    seq.setTrackLeds(&trk, quantizeMode);
 }
 void updateGates()
 {
@@ -213,6 +214,7 @@ void setup()
 
     for(int i = 0; i < 4; ++i)
     {
+        digitalWrite(gatePins[i], LOW);
         pinMode(gatePins[i], OUTPUT);
     }
     dac1.init();

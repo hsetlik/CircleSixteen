@@ -60,6 +60,7 @@ namespace Quantize
             rootDegree = (uint8_t)newRoot;
             setValidNotes();
         }
+        ScaleMode getMode() {return mode; }
     private:
         uint8_t quantizeUp(uint8_t note);
         uint8_t quantizeDown(uint8_t note);

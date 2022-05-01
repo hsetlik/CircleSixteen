@@ -45,14 +45,14 @@ public:
     void setTempo(int newTempo);
     Sequence();
     void setRing(Adafruit_NeoPixel* pixels);
-    void setTrackLeds(Adafruit_NeoPixel* pixels);
+    void setTrackLeds(Adafruit_NeoPixel* pixels, bool quantMode=false);
     unsigned long lastMicros = 0;
     void shiftSelected(bool dir);
     void shiftTempo(bool dir);
     void shiftNote(bool dir);
     void shiftTrack(bool dir);
     void shiftGateLength(bool dir);
-    void shiftQuantize(bool dir);
+    void shiftQuantizeMode(bool dir);
     void shiftQuantRoot(bool dir);
 private:
     Hsv getRingPixelColor(int step, int trk);

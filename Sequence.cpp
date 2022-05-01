@@ -58,12 +58,21 @@ Hsv Sequence::getRingPixelColor(int step, int trk)
     return {0.0f, 0.0f, 0.0f};
 }
 
-void Sequence::setTrackLeds(Adafruit_NeoPixel* pixels)
+void Sequence::setTrackLeds(Adafruit_NeoPixel* pixels, bool quantMode)
 {
     pixels->clear();
     for(int i = 0; i < 4; ++i)
     {
         auto hsv = getTrackPixelColor(i);
+        if (quantMode && 
+        i != currentTrack && 
+        (tracks[currentTrack].quant.getMode() != Quantize::ScaleMode::Off))
+        {
+            int idx = (int)tracks[currentTrack].quant.getMode() - 1;
+            hsv = SeqColors::modeColors[idx % 7];
+            Serial.println("bkgnd is:");
+            Serial.println(hsv.asRgb());
+        }
         pixels->setPixelColor(i, hsv.asRgb());
     }
     pixels->show();
@@ -130,7 +139,7 @@ void Sequence::shiftGateLength(bool dir)
     tracks[currentTrack].steps[selected].gateLength = length;
 }
 
-void Sequence::shiftQuantize(bool dir)
+void Sequence::shiftQuantizeMode(bool dir)
 {
     if (dir)
         tracks[currentTrack].quant.nextMode();
