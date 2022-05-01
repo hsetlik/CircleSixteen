@@ -7,9 +7,9 @@
 #define RING 3
 #define TRACK 2
 #define GATEA 4
-#define GATEB 5
+#define GATEB 7
 #define GATEC 6
-#define GATED 7
+#define GATED 5
 #define DAC1 8
 #define DAC2 9
 
