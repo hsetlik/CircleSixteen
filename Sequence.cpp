@@ -1,14 +1,14 @@
 #include "Sequence.h"
 Step::Step()
 {
-    midiNote = 69;
+    midiNote = 45;
     gate = false;
     gateLength = 80;
 }
 //==========================
 int Track::getNote(uint8_t idx)
 {
-    return quant.processNote(idx);
+    return quant.processNote(steps[idx].midiNote);
 }
 //========================
 Sequence::Sequence()

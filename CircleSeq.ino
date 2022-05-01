@@ -16,7 +16,7 @@
 //this corresponds to an external amplifier with a gain of 2 to meet volt/octave scale
 #define HALFSTEP_MV 42.626f
 
-const int gatePins[] = {GATEA, GATEB, GATEC, GATED};
+const uint8_t gatePins[] = {GATEA, GATEB, GATEC, GATED};
 
 //=================VARIABLES========================
 Sequence seq;
@@ -137,41 +137,44 @@ void updateTrk()
 }
 void updateGates()
 {
-    for (int i = 0; i < 4; ++i)
+    for(int t = 0; t < 4; ++t)
     {
-        auto trk = &seq.tracks[i];
-        if (trk->gateHigh)
+        auto& trk = seq.tracks[t];
+        auto& step = trk.steps[seq.currentStep];
+        auto endMicros = (long)seq.periodMicros * (float)((float)step.gateLength / 100.f);
+        if(trk.gateHigh && step.gate && seq.microsIntoCycle <= endMicros)
+            continue;
+        if (trk.gateHigh && step.gate && seq.microsIntoCycle > endMicros)
         {
-            //find the ms where gate should end
-            auto end = seq.periodMicros * (trk->steps[i].gateLength / 100);
-            if (seq.microsIntoCycle > end)
-            {
-                trk->gateHigh = false;
-                digitalWrite(gatePins[i], LOW);
-            }
+            //turn gate off
+            digitalWrite(gatePins[t], LOW);
+            trk.gateHigh = false;
         }
-        else if(seq.tracks[i].steps[seq.currentStep].gate)
+        else if (!trk.gateHigh && step.gate && seq.microsIntoCycle <= endMicros)
         {
-            trk->gateHigh = true;
-            digitalWrite(gatePins[i], HIGH);
+            //turn gate on
+            digitalWrite(gatePins[t], HIGH);
+            trk.gateHigh = true;
         }
     }
 }
 void setVoltageForTrack(int trk, uint16_t mV)
 {
+    Serial.println("Setting DAC voltage");
+    Serial.println(mV);
     switch(trk)
     {
         case 0:
-            dac1.setVoltageA(mV);
-            dac1.updateDAC();
+            dac2.setVoltageA(mV);
+            dac2.updateDAC();
             break;
         case 1:
             dac1.setVoltageB(mV);
             dac1.updateDAC();
             break;
         case 2:
-            dac2.setVoltageA(mV);
-            dac2.updateDAC();
+            dac1.setVoltageA(mV);
+            dac1.updateDAC();
             break;
         case 3:
             dac2.setVoltageB(mV);
@@ -184,15 +187,17 @@ void setVoltageForTrack(int trk, uint16_t mV)
 
 uint16_t mvForMidiNote(int note)
 {
-    return (uint16_t)((float)note * HALFSTEP_MV + 0.5);
+    return (uint16_t)((float)note * HALFSTEP_MV);
 }
 
 void updateDACs()
 {
     for(int i = 0; i < 4; ++i)
     {
-        if (seq.tracks[i].steps[seq.currentStep].gate)
+        if (seq.tracks[i].gateHigh)
         {
+            Serial.println("DAC update needed on: ");
+            Serial.println(i);
             auto mv = mvForMidiNote(seq.tracks[i].getNote((uint8_t)seq.currentStep));
             setVoltageForTrack(i, mv);
         }
@@ -214,8 +219,8 @@ void setup()
 
     for(int i = 0; i < 4; ++i)
     {
-        digitalWrite(gatePins[i], LOW);
         pinMode(gatePins[i], OUTPUT);
+        digitalWrite(gatePins[i], LOW);
     }
     dac1.init();
     dac2.init();
