@@ -137,6 +137,8 @@ void updateTrk()
 }
 void updateGates()
 {
+    if (!isPlaying)
+        return;
     for(int t = 0; t < 4; ++t)
     {
         auto& trk = seq.tracks[t];
