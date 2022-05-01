@@ -57,6 +57,7 @@ namespace Quantize
         void prevMode();
         void shiftRoot(bool dir);
         ScaleMode getMode() {return mode; }
+        uint8_t getRoot() {return rootDegree; }
     private:
         static const uint8_t* getDegrees(ScaleMode mode);
         static uint8_t nearestTrueIndex(bool* table, uint8_t idx);

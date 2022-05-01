@@ -58,11 +58,6 @@ void Quantize::TrackQuantizer::shiftRoot(bool dir)
     calculateLut();
 }
 
-const uint8_t* Quantize::TrackQuantizer::getDegrees(ScaleMode mode)
-{
-    auto idx = (uint8_t)mode - 1;
-    return MajorModes[idx];
-}
 uint8_t Quantize::TrackQuantizer::nearestTrueIndex(bool* table, uint8_t idx)
 {
     if(table[idx])

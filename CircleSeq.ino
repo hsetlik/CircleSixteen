@@ -38,8 +38,8 @@ void buttonPressed(int idx)
         case 0: //handle play/stop
         {
             quantizeMode = !quantizeMode;
-            Serial.println("Quantize mode is:");
-            Serial.println(quantizeMode ? "On" : "Off");
+            ////Serial.println("Quantize mode is:");
+            ////Serial.println(quantizeMode ? "On" : "Off");
             break;
         }
         case 1: //handle gate toggling
@@ -162,8 +162,8 @@ void updateGates()
 }
 void setVoltageForTrack(int trk, uint16_t mV)
 {
-    Serial.println("Setting DAC voltage");
-    Serial.println(mV);
+    //Serial.println("Setting DAC voltage");
+    //Serial.println(mV);
     switch(trk)
     {
         case 0:
@@ -198,8 +198,8 @@ void updateDACs()
     {
         if (seq.tracks[i].gateHigh)
         {
-            Serial.println("DAC update needed on: ");
-            Serial.println(i);
+            //Serial.println("DAC update needed on: ");
+            //Serial.println(i);
             auto mv = mvForMidiNote(seq.tracks[i].getNote((uint8_t)seq.currentStep));
             setVoltageForTrack(i, mv);
         }
@@ -209,7 +209,7 @@ void updateDACs()
 //====================== setup / loop ===========================
 void setup()
 {
-    Serial.begin(9600);
+    //Serial.begin(9600);
 	Wire.begin(8);
     Wire.onReceive(recieveEvent);
 

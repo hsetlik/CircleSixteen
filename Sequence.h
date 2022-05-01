@@ -34,12 +34,12 @@ class Sequence
 {
 public:
     Track tracks[4];
-    int tempo = 120;
+    uint16_t tempo = 120;
     unsigned long periodMicros;
     unsigned long microsIntoCycle;
-    int currentTrack;
-    int currentStep;
-    int selected;
+    uint8_t currentTrack;
+    uint8_t currentStep;
+    uint8_t selected;
     void setTempo(int newTempo);
     Sequence();
     void setRing(Adafruit_NeoPixel* pixels);
@@ -54,7 +54,7 @@ public:
     void shiftQuantizeMode(bool dir);
     void shiftQuantRoot(bool dir);
 private:
-    Hsv getRingPixelColor(int step, int trk);
-    Hsv getTrackPixelColor(int trk, bool quantMode=false);
+    Hsv getRingPixelColor(uint8_t step, uint8_t trk);
+    Hsv getTrackPixelColor(uint8_t trk, bool quantMode=false);
 };
 #endif

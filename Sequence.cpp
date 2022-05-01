@@ -37,7 +37,7 @@ void Sequence::setRing(Adafruit_NeoPixel* ring)
     ring->show();
 }
 
-Hsv Sequence::getRingPixelColor(int step, int trk)
+Hsv Sequence::getRingPixelColor(uint8_t step, uint8_t trk)
 {
     if (step == currentStep)
         return SeqColors::stepColor;
@@ -70,15 +70,18 @@ void Sequence::setTrackLeds(Adafruit_NeoPixel* pixels, bool quantMode)
         {
             int idx = (int)tracks[currentTrack].quant.getMode() - 1;
             hsv = SeqColors::modeColors[idx % 7];
-            Serial.println("bkgnd is:");
-            Serial.println(hsv.asRgb());
+            ////Serial.println("bkgnd is:");
+            ////Serial.println(hsv.asRgb());
+        } else if (quantMode && i == currentTrack)
+        {
+            hsv = SeqColors::pitchColors[tracks[currentTrack].quant.getRoot()];
         }
         pixels->setPixelColor(i, hsv.asRgb());
     }
     pixels->show();
 }
 
-Hsv Sequence::getTrackPixelColor(int trk, bool quantMode)
+Hsv Sequence::getTrackPixelColor(uint8_t trk, bool quantMode)
 {
     auto base = SeqColors::trackColors[trk % 4];
     if (currentTrack == trk)
@@ -117,7 +120,7 @@ void Sequence::shiftNote(bool dir)
     else if(note >= MIDI_MIN)
         --note;
     tracks[currentTrack].steps[selected].midiNote = note; 
-    Serial.println(note);
+    //Serial.println(note);
 }
 
 void Sequence::shiftTrack(bool dir)
