@@ -7,9 +7,9 @@
 #define RING 3
 #define TRACK 2
 #define GATEA 4
-#define GATEB 7
+#define GATEB 5
 #define GATEC 6
-#define GATED 5
+#define GATED 7
 #define DAC1 8
 #define DAC2 9
 
@@ -89,7 +89,7 @@ void moveEncoder(int idx, bool dir)
             if (quantizeMode)
                 seq.shiftQuantizeMode(dir);
             else
-                seq.shiftTrack(!dir);
+                seq.shiftTrack(dir);
             break;
         }
     }
@@ -116,7 +116,7 @@ void checkAdvance()
     seq.microsIntoCycle += (newMicros - seq.lastMicros);
     if (seq.microsIntoCycle >= seq.periodMicros)
     {
-        seq.microsIntoCycle = 0;
+        seq.microsIntoCycle -= seq.periodMicros;
         if (isPlaying)
             advance();
     }
@@ -171,16 +171,16 @@ void setVoltageForTrack(int trk, uint16_t mV)
             dac2.updateDAC();
             break;
         case 1:
-            dac1.setVoltageB(mV);
-            dac1.updateDAC();
+            dac2.setVoltageB(mV);
+            dac2.updateDAC();
             break;
         case 2:
             dac1.setVoltageA(mV);
             dac1.updateDAC();
             break;
         case 3:
-            dac2.setVoltageB(mV);
-            dac2.updateDAC();
+            dac1.setVoltageB(mV);
+            dac1.updateDAC();
             break;
         default:
             break;

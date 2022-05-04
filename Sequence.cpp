@@ -76,7 +76,7 @@ void Sequence::setTrackLeds(Adafruit_NeoPixel* pixels, bool quantMode)
         {
             hsv = SeqColors::pitchColors[tracks[currentTrack].quant.getRoot()];
         }
-        pixels->setPixelColor(i, hsv.asRgb());
+        pixels->setPixelColor(3 - i, hsv.asRgb());
     }
     pixels->show();
 }
