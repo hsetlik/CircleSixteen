@@ -15,9 +15,9 @@
 
 struct Step
 {
-    int midiNote;
+    uint8_t midiNote;
     bool gate;
-    int gateLength;
+    uint8_t gateLength;
     Step();
     Hsv getBaseColor() { return SeqColors::pitchColors[midiNote % 12]; }
 };
@@ -28,6 +28,11 @@ struct Track
     Step steps[16];
     Quantize::TrackQuantizer quant;
     int getNote(uint8_t idx);
+    //Returns the number of empty steps following this index OR -1 if this step is off
+    int getLength(uint8_t idx);
+    //Returns the index of the last step before or at idx that had a note (or -1 if the track is empty)
+    int lastTriggeredFrom(uint8_t idx);
+    unsigned long lastTriggeredAt = 1;
 };
 
 class Sequence

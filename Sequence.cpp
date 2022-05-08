@@ -10,6 +10,35 @@ int Track::getNote(uint8_t idx)
 {
     return quant.processNote(steps[idx].midiNote);
 }
+
+
+int Track::getLength(uint8_t idx)
+{
+    if(!steps[idx].gate)
+        return -1;
+    int length = 1;
+    while (idx < 16)
+    {
+        if(steps[idx].gate)
+            return length;
+        ++idx;
+        ++length;
+    }
+    return length;
+}
+
+int Track::lastTriggeredFrom(uint8_t idx)
+{
+    uint8_t checked = 0;
+    while (checked < 16)
+    {
+        if (steps[idx].gate)
+            return (int)idx;
+        idx = (idx == 0) ? 15 : idx - 1;
+        ++checked;
+    }
+    return -1;
+}
 //========================
 Sequence::Sequence()
 {

@@ -38,8 +38,6 @@ void buttonPressed(int idx)
         case 0: //handle play/stop
         {
             quantizeMode = !quantizeMode;
-            ////Serial.println("Quantize mode is:");
-            ////Serial.println(quantizeMode ? "On" : "Off");
             break;
         }
         case 1: //handle gate toggling
@@ -139,24 +137,34 @@ void updateGates()
 {
     if (!isPlaying)
         return;
-    for(int t = 0; t < 4; ++t)
+    for(uint8_t t = 0; t < 4; ++t)
     {
-        auto& trk = seq.tracks[t];
-        auto& step = trk.steps[seq.currentStep];
-        auto endMicros = (long)seq.periodMicros * (float)((float)step.gateLength / 100.f);
-        if(trk.gateHigh && step.gate && seq.microsIntoCycle <= endMicros)
+        //Step 1: figure out if the track needs to be triggered
+        Track& trk =  seq.tracks[t];
+        auto last = trk.lastTriggeredFrom(seq.currentStep);
+        auto now = micros();
+        //Do nothing if this track is empty
+        if (last == -1)
             continue;
-        if (trk.gateHigh && step.gate && seq.microsIntoCycle > endMicros)
+        auto stepStart = now - seq.microsIntoCycle;
+        if (last != seq.currentStep)
         {
-            //turn gate off
-            digitalWrite(gatePins[t], LOW);
-            trk.gateHigh = false;
+            auto diff = (int)abs(seq.currentStep - last) * seq.periodMicros;
+            stepStart -= diff;
         }
-        else if (!trk.gateHigh && step.gate && seq.microsIntoCycle <= endMicros)
+        auto length = (unsigned long)(seq.periodMicros * (float)(trk.steps[last].gateLength / 100.0f));
+        auto over = now >= stepStart + length;
+        //turn the gate on as needed
+        if (last == seq.currentStep && !over)
         {
-            //turn gate on
-            digitalWrite(gatePins[t], HIGH);
+            trk.lastTriggeredAt = now;
             trk.gateHigh = true;
+            digitalWrite(gatePins[t], HIGH);
+        }
+        else if (trk.gateHigh && over)
+        {
+            trk.gateHigh = false;
+            digitalWrite(gatePins[t], LOW);
         }
     }
 }
@@ -209,7 +217,7 @@ void updateDACs()
 //====================== setup / loop ===========================
 void setup()
 {
-    //Serial.begin(9600);
+    Serial.begin(9600);
 	Wire.begin(8);
     Wire.onReceive(recieveEvent);
 
